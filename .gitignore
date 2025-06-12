@@ -71,3 +71,10 @@ public/swe-worker*
 vertex-ai-key.json
 .pnpm-store
 ./packages/lobe-ui
+
+
+# local docker compose data
+/docker-compose/local/data
+/docker-compose/local/s3_data
+/docker-compose/custom/logto/data
+/docker-compose/custom/logto/s3_data
