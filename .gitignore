@@ -55,6 +55,7 @@ test-output
 next-env.d.ts
 .next
 .env
+.env.production
 public/*.js
 public/sitemap.xml
 public/sitemap-index.xml

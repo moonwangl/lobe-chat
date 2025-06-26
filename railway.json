@@ -1,8 +1,7 @@
 {
   "build": {
     "builder": "Docker",
-    "dockerfilePath": "Dockerfile.database",
-    "context": "../../../"
+    "dockerfilePath": "Dockerfile.database"
   },
   "deploy": {
     "startCommand": null,
