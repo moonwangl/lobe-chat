@@ -1,7 +1,7 @@
 import { ActionIconGroup, type ActionIconGroupEvent, type ActionIconGroupProps } from '@lobehub/ui';
 import { App } from 'antd';
 import isEqual from 'fast-deep-equal';
-import { memo, use, useCallback, useState } from 'react';
+import { memo, use, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { VirtuosoContext } from '@/features/Conversation/components/VirtualizedList/VirtuosoContext';
@@ -11,7 +11,8 @@ import { MessageRoleType } from '@/types/message';
 
 import { renderActions } from '../../Actions';
 import { useChatListActionsBar } from '../../hooks/useChatListActionsBar';
-import ShareMessageModal from './ShareMessageModal';
+
+// import ShareMessageModal from './ShareMessageModal'; // Hidden per user request
 
 export type ActionsBarProps = ActionIconGroupProps;
 
@@ -64,7 +65,7 @@ const Actions = memo<ActionsProps>(({ id, inPortalThread, index }) => {
   const { message } = App.useApp();
   const virtuosoRef = use(VirtuosoContext);
 
-  const [showShareModal, setShareModal] = useState(false);
+  // const [showShareModal, setShareModal] = useState(false); // Hidden per user request
 
   const handleActionClick = useCallback(
     async (action: ActionIconGroupEvent) => {
@@ -122,10 +123,10 @@ const Actions = memo<ActionsProps>(({ id, inPortalThread, index }) => {
         //   break;
         // }
 
-        case 'share': {
-          setShareModal(true);
-          break;
-        }
+        // case 'share': { // Hidden per user request
+        //   setShareModal(true);
+        //   break;
+        // }
       }
 
       if (action.keyPath.at(-1) === 'translate') {
@@ -149,13 +150,14 @@ const Actions = memo<ActionsProps>(({ id, inPortalThread, index }) => {
       {/*{showModal && (*/}
       {/*  <ExportPreview content={item.content} onClose={() => setModal(false)} open={showModal} />*/}
       {/*)}*/}
-      <ShareMessageModal
+      {/* <ShareMessageModal
         message={item}
         onCancel={() => {
           setShareModal(false);
         }}
         open={showShareModal}
-      />
+      /> */}{' '}
+      {/* Hidden per user request */}
     </>
   );
 });

@@ -26,7 +26,7 @@ export const AssistantActionsBar: RenderAction = memo(({ onActionClick, error, t
     del,
     branching,
     // export: exportPDF,
-    share,
+    // share, // Hidden per user request
   } = useChatListActionsBar({ hasThread });
 
   const { translate, tts } = useCustomActions();
@@ -54,7 +54,7 @@ export const AssistantActionsBar: RenderAction = memo(({ onActionClick, error, t
           tts,
           translate,
           divider,
-          share,
+          // share, // Hidden per user request
           // exportPDF,
           divider,
           regenerate,

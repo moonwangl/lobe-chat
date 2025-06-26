@@ -15,7 +15,8 @@ import { settingsSelectors } from '@/store/user/selectors';
 import { HotkeyEnum } from '@/types/hotkey';
 
 import SettingButton from '../../../features/SettingButton';
-import ShareButton from '../../../features/ShareButton';
+
+// import ShareButton from '../../../features/ShareButton'; // Hidden per user request
 
 const HeaderAction = memo<{ className?: string }>(({ className }) => {
   const { t } = useTranslation('chat');
@@ -29,7 +30,7 @@ const HeaderAction = memo<{ className?: string }>(({ className }) => {
 
   return (
     <Flexbox className={className} gap={4} horizontal>
-      <ShareButton />
+      {/* <ShareButton /> */} {/* Hidden per user request */}
       <Tooltip hotkey={hotkey} title={t('toggleRightPanel.title', { ns: 'hotkey' })}>
         <ActionIcon
           icon={showAgentSettings ? PanelRightClose : PanelRightOpen}
