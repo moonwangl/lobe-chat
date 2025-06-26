@@ -1,0 +1,13 @@
+{
+  "build": {
+    "builder": "Docker",
+    "dockerfilePath": "Dockerfile.database",
+    "context": "../../../"
+  },
+  "deploy": {
+    "startCommand": null,
+    "restartPolicy": {
+      "type": "ALWAYS"
+    }
+  }
+}
