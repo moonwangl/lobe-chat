@@ -159,6 +159,11 @@ ENV MIDDLEWARE_REWRITE_THROUGH_LOCAL="1"
 ENV HOSTNAME="0.0.0.0" \
     PORT="3210"
 
+# branding
+ENV NEXT_PUBLIC_BRANDING_NAME="Meridian Reports" \
+    NEXT_PUBLIC_BRANDING_LOGO_URL="https://s3.ap-southeast-2.amazonaws.com/games.galaxyone.com.au/icon.png" \
+    NEXT_PUBLIC_ORG_NAME="Galaxy One" 
+
 # General Variables
 ENV ACCESS_CODE="" \
     APP_URL="" \
