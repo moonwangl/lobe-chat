@@ -47,8 +47,12 @@ export interface SystemStatus {
   // which sessionGroup should expand
   expandSessionGroupKeys: string[];
   filePanelWidth: number;
+  hideChangelogButton?: boolean;
+  hideCommunityEditionBadge?: boolean;
+  hideHelpCenterButton?: boolean;
   hidePWAInstaller?: boolean;
   hideThreadLimitAlert?: boolean;
+  hideUserManualButton?: boolean;
   inputHeight: number;
   /**
    * 应用初始化时不启用 PGLite，只有当用户手动开启时才启用
@@ -101,8 +105,12 @@ export interface GlobalState {
 export const INITIAL_STATUS = {
   expandSessionGroupKeys: [SessionDefaultGroup.Pinned, SessionDefaultGroup.Default],
   filePanelWidth: 320,
+  hideChangelogButton: true,
+  hideCommunityEditionBadge: true,
+  hideHelpCenterButton: true,
   hidePWAInstaller: false,
-  hideThreadLimitAlert: false,
+  hideThreadLimitAlert: true,
+  hideUserManualButton: true,
   inputHeight: 200,
   mobileShowTopic: false,
   portalWidth: 400,

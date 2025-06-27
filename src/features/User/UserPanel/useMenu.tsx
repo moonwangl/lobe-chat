@@ -35,6 +35,7 @@ import {
 import { isDesktop } from '@/const/version';
 import DataImporter from '@/features/DataImporter';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
+import { useGlobalStore } from '@/store/global';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/selectors';
@@ -68,6 +69,10 @@ export const useMenu = () => {
   const hasNewVersion = useNewVersion();
   const { t } = useTranslation(['common', 'setting', 'auth']);
   const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
+  const [hideChangelogButton, hideHelpCenterButton] = useGlobalStore((s) => [
+    s.status.hideChangelogButton,
+    s.status.hideHelpCenterButton,
+  ]);
   const [isLogin, isLoginWithAuth] = useUserStore((s) => [
     authSelectors.isLogin(s),
     authSelectors.isLoginWithAuth(s),
@@ -140,12 +145,12 @@ export const useMenu = () => {
         </Link>
       ),
     },
-    {
+    !hideChangelogButton && {
       icon: <Icon icon={FileClockIcon} />,
       key: 'changelog',
       label: <Link href={isDesktop ? CHANGELOG : '/changelog/modal'}>{t('changelog')}</Link>,
     },
-    {
+    !hideHelpCenterButton && {
       children: [
         {
           icon: <Icon icon={Book} />,

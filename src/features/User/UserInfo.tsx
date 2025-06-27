@@ -5,6 +5,7 @@ import { memo } from 'react';
 import { Flexbox, FlexboxProps } from 'react-layout-kit';
 
 import PlanTag from '@/features/User/PlanTag';
+import { useGlobalStore } from '@/store/global';
 import { useUserStore } from '@/store/user';
 import { authSelectors, userProfileSelectors } from '@/store/user/selectors';
 
@@ -30,6 +31,7 @@ export interface UserInfoProps extends FlexboxProps {
 const UserInfo = memo<UserInfoProps>(({ avatarProps, onClick, ...rest }) => {
   const { styles, theme } = useStyles();
   const isSignedIn = useUserStore(authSelectors.isLogin);
+  const hideCommunityEditionBadge = useGlobalStore((s) => s.status.hideCommunityEditionBadge);
   const [nickname, username] = useUserStore((s) => [
     userProfileSelectors.nickName(s),
     userProfileSelectors.username(s),
@@ -52,7 +54,7 @@ const UserInfo = memo<UserInfoProps>(({ avatarProps, onClick, ...rest }) => {
           <div className={styles.username}>{username}</div>
         </Flexbox>
       </Flexbox>
-      {isSignedIn && <PlanTag />}
+      {isSignedIn && !hideCommunityEditionBadge && <PlanTag />}
     </Flexbox>
   );
 });

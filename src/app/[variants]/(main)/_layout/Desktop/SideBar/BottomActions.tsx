@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
 import { DOCUMENTS_REFER_URL, GITHUB } from '@/const/url';
+import { useGlobalStore } from '@/store/global';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
 const ICON_SIZE: ActionIconProps['size'] = {
@@ -17,6 +18,7 @@ const ICON_SIZE: ActionIconProps['size'] = {
 const BottomActions = memo(() => {
   const { t } = useTranslation('common');
   const { hideGitHub, hideDocs } = useServerConfigStore(featureFlagsSelectors);
+  const hideUserManualButton = useGlobalStore((s) => s.status.hideUserManualButton);
 
   return (
     <Flexbox gap={8}>
@@ -30,7 +32,7 @@ const BottomActions = memo(() => {
           />
         </Link>
       )}
-      {!hideDocs && (
+      {!hideDocs && !hideUserManualButton && (
         <Link aria-label={t('document')} href={DOCUMENTS_REFER_URL} target={'_blank'}>
           <ActionIcon
             icon={Book}
