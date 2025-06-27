@@ -69,9 +69,10 @@ export const useMenu = () => {
   const hasNewVersion = useNewVersion();
   const { t } = useTranslation(['common', 'setting', 'auth']);
   const { showCloudPromotion, hideDocs } = useServerConfigStore(featureFlagsSelectors);
-  const [hideChangelogButton, hideHelpCenterButton] = useGlobalStore((s) => [
+  const [hideChangelogButton, hideHelpCenterButton, hideSettingsButton] = useGlobalStore((s) => [
     s.status.hideChangelogButton,
     s.status.hideHelpCenterButton,
+    s.status.hideSettingsButton,
   ]);
   const [isLogin, isLoginWithAuth] = useUserStore((s) => [
     authSelectors.isLogin(s),
@@ -87,7 +88,7 @@ export const useMenu = () => {
   ];
 
   const settings: MenuProps['items'] = [
-    {
+    !hideSettingsButton && {
       extra: isDesktop ? (
         <div>
           <Hotkey keys={DEFAULT_HOTKEY_CONFIG.openSettings} />
@@ -104,7 +105,7 @@ export const useMenu = () => {
     {
       type: 'divider',
     },
-  ];
+  ].filter(Boolean) as ItemType[];
 
   /* ↓ cloud slot ↓ */
 

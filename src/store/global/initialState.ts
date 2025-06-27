@@ -51,6 +51,7 @@ export interface SystemStatus {
   hideCommunityEditionBadge?: boolean;
   hideHelpCenterButton?: boolean;
   hidePWAInstaller?: boolean;
+  hideSettingsButton?: boolean;
   hideThreadLimitAlert?: boolean;
   hideUserManualButton?: boolean;
   inputHeight: number;
@@ -109,6 +110,7 @@ export const INITIAL_STATUS = {
   hideCommunityEditionBadge: true,
   hideHelpCenterButton: true,
   hidePWAInstaller: false,
+  hideSettingsButton: true,
   hideThreadLimitAlert: true,
   hideUserManualButton: true,
   inputHeight: 200,
