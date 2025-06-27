@@ -11,13 +11,14 @@ import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfi
 import NavBar from './NavBar';
 
 const CloudBanner = dynamic(() => import('@/features/AlertBanner/CloudBanner'));
+// Hide discover routes since Discover icon is hidden in mobile view
 const MOBILE_NAV_ROUTES = new Set([
   '/chat',
-  '/discover',
-  '/discover/assistants',
-  '/discover/plugins',
-  '/discover/models',
-  '/discover/providers',
+  // '/discover',
+  // '/discover/assistants',
+  // '/discover/plugins',
+  // '/discover/models',
+  // '/discover/providers',
   '/me',
 ]);
 

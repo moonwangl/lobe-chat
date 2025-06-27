@@ -1,20 +1,11 @@
-import {
-  Book,
-  CircleUserRound,
-  Cloudy,
-  Database,
-  Download,
-  Feather,
-  FileClockIcon,
-  Settings2,
-} from 'lucide-react';
+import { CircleUserRound, Cloudy, Database, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 
 import { CellProps } from '@/components/Cell';
 import { enableAuth } from '@/const/auth';
 import { LOBE_CHAT_CLOUD } from '@/const/branding';
-import { DOCUMENTS, FEEDBACK, OFFICIAL_URL, UTM_SOURCE } from '@/const/url';
+import { OFFICIAL_URL, UTM_SOURCE } from '@/const/url';
 import { isServerMode } from '@/const/version';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
@@ -42,13 +33,14 @@ export const useCategory = () => {
     },
   ];
 
+  // Hide settings button in mobile view
   const settings: CellProps[] = [
-    {
-      icon: Settings2,
-      key: 'setting',
-      label: t('userPanel.setting'),
-      onClick: () => router.push('/me/settings'),
-    },
+    // {
+    //   icon: Settings2,
+    //   key: 'setting',
+    //   label: t('userPanel.setting'),
+    //   onClick: () => router.push('/me/settings'),
+    // },
     {
       type: 'divider',
     },
@@ -89,6 +81,7 @@ export const useCategory = () => {
     },
   ];
 
+  // Hide user manual, feedback, and changelog buttons in mobile view
   const helps: CellProps[] = [
     showCloudPromotion && {
       icon: Cloudy,
@@ -96,24 +89,24 @@ export const useCategory = () => {
       label: t('userPanel.cloud', { name: LOBE_CHAT_CLOUD }),
       onClick: () => window.open(`${OFFICIAL_URL}?utm_source=${UTM_SOURCE}`, '__blank'),
     },
-    {
-      icon: Book,
-      key: 'docs',
-      label: t('document'),
-      onClick: () => window.open(DOCUMENTS, '__blank'),
-    },
-    {
-      icon: Feather,
-      key: 'feedback',
-      label: t('feedback'),
-      onClick: () => window.open(FEEDBACK, '__blank'),
-    },
-    {
-      icon: FileClockIcon,
-      key: 'changelog',
-      label: t('changelog'),
-      onClick: () => router.push('/changelog'),
-    },
+    // {
+    //   icon: Book,
+    //   key: 'docs',
+    //   label: t('document'),
+    //   onClick: () => window.open(DOCUMENTS, '__blank'),
+    // },
+    // {
+    //   icon: Feather,
+    //   key: 'feedback',
+    //   label: t('feedback'),
+    //   onClick: () => window.open(FEEDBACK, '__blank'),
+    // },
+    // {
+    //   icon: FileClockIcon,
+    //   key: 'changelog',
+    //   label: t('changelog'),
+    //   onClick: () => router.push('/changelog'),
+    // },
   ].filter(Boolean) as CellProps[];
 
   const mainItems = [
