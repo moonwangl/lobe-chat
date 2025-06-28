@@ -9,14 +9,11 @@ import { Flexbox } from 'react-layout-kit';
 import { useActiveProfileKey } from '@/hooks/useActiveTabKey';
 import { mobileHeaderSticky } from '@/styles/mobileHeader';
 
-import ShareButton from '../../stats/features/ShareButton';
-
 const Header = memo(() => {
   const { t } = useTranslation('auth');
 
   const router = useRouter();
   const activeSettingsKey = useActiveProfileKey();
-  const isStats = activeSettingsKey === 'stats';
 
   const handleBackClick = () => {
     router.push('/me/profile');
@@ -34,7 +31,7 @@ const Header = memo(() => {
         />
       }
       onBackClick={handleBackClick}
-      right={isStats ? <ShareButton mobile /> : undefined}
+      right={undefined}
       showBackButton
       style={mobileHeaderSticky}
     />
