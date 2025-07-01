@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import BrandWatermark from '@/components/BrandWatermark';
 import AuthIcons from '@/components/NextAuth/AuthIcons';
+import { BRANDING_LOGO_URL, BRANDING_NAME } from '@/const/branding';
 import { DOCUMENTS_REFER_URL, PRIVACY_URL, TERMS_URL } from '@/const/url';
 import { useUserStore } from '@/store/user';
 
@@ -113,9 +114,17 @@ export default memo(() => {
           <div className={styles.text}>
             <Title className={styles.title} level={4}>
               <div>
-                <LobeChat size={48} />
+                {BRANDING_LOGO_URL ? (
+                  <img
+                    alt={BRANDING_NAME}
+                    src={BRANDING_LOGO_URL}
+                    style={{ height: 48, objectFit: 'contain', width: 48 }}
+                  />
+                ) : (
+                  <LobeChat size={48} />
+                )}
               </div>
-              {t('signIn.start.title', { applicationName: 'LobeChat' })}
+              {t('signIn.start.title', { applicationName: BRANDING_NAME })}
             </Title>
             <Paragraph className={styles.description}>{t('signIn.start.subtitle')}</Paragraph>
           </div>

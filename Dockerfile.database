@@ -50,11 +50,17 @@ ARG FEATURE_FLAGS
 ARG NEXT_PUBLIC_BRANDING_NAME
 ARG NEXT_PUBLIC_BRANDING_LOGO_URL
 ARG NEXT_PUBLIC_ORG_NAME
+ARG NEXT_PUBLIC_OFFICIAL_URL
+ARG NEXT_PUBLIC_OFFICIAL_PREVIEW_URL
+ARG NEXT_PUBLIC_OFFICIAL_SITE
 
 # branding
 ENV NEXT_PUBLIC_BRANDING_NAME="Meridian Reports" \
     NEXT_PUBLIC_BRANDING_LOGO_URL="https://s3.ap-southeast-2.amazonaws.com/games.galaxyone.com.au/icon.png" \
-    NEXT_PUBLIC_ORG_NAME="Galaxy One" 
+    NEXT_PUBLIC_ORG_NAME="Galaxy One" \
+    NEXT_PUBLIC_OFFICIAL_URL="https://meridian-reports.com" \
+    NEXT_PUBLIC_OFFICIAL_PREVIEW_URL="https://chat.meridian-reports.com" \
+    NEXT_PUBLIC_OFFICIAL_SITE="https://meridian-reports.com" 
 
 ENV NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}" \
     FEATURE_FLAGS="${FEATURE_FLAGS}"
@@ -170,7 +176,10 @@ ENV HOSTNAME="0.0.0.0" \
 # branding
 ENV NEXT_PUBLIC_BRANDING_NAME="Meridian Reports" \
     NEXT_PUBLIC_BRANDING_LOGO_URL="https://s3.ap-southeast-2.amazonaws.com/games.galaxyone.com.au/icon.png" \
-    NEXT_PUBLIC_ORG_NAME="Galaxy One" 
+    NEXT_PUBLIC_ORG_NAME="Galaxy One" \
+    NEXT_PUBLIC_OFFICIAL_URL="https://meridian-reports.com" \
+    NEXT_PUBLIC_OFFICIAL_PREVIEW_URL="https://chat.meridian-reports.com" \
+    NEXT_PUBLIC_OFFICIAL_SITE="https://meridian-reports.com" 
 
 # General Variables
 ENV ACCESS_CODE="" \
