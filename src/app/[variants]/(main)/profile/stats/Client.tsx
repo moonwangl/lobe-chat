@@ -10,7 +10,6 @@ import { FORM_STYLE } from '@/const/layoutTokens';
 import AiHeatmaps from './features/AiHeatmaps';
 import AssistantsRank from './features/AssistantsRank';
 import ModelsRank from './features/ModelsRank';
-import ShareButton from './features/ShareButton';
 import TopicsRank from './features/TopicsRank';
 import TotalAssistants from './features/TotalAssistants';
 import TotalMessages from './features/TotalMessages';
@@ -23,14 +22,7 @@ const Client = memo<{ mobile?: boolean }>(({ mobile }) => {
 
   return (
     <Flexbox gap={mobile ? 0 : 24}>
-      {mobile ? (
-        <Welcome mobile />
-      ) : (
-        <Flexbox align={'flex-start'} gap={16} horizontal justify={'space-between'}>
-          <Welcome />
-          <ShareButton />
-        </Flexbox>
-      )}
+      {mobile ? <Welcome mobile /> : <Welcome />}
       <FormGroup style={FORM_STYLE.style} title={t('tab.stats')} variant={'borderless'}>
         <Grid maxItemWidth={150} paddingBlock={16} rows={4}>
           <TotalAssistants mobile={mobile} />
