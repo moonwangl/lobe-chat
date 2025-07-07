@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "Scarica file",
-    "unsupportedFileAndContact": "Questo formato di file non è attualmente supportato per la visualizzazione online. Se hai bisogno di una visualizzazione, ti preghiamo di <1>contattarci</1>."
+    "unsupportedFileAndContact": "Questo formato di file non è attualmente supportato per la visualizzazione online."
   },
   "searchFilePlaceholder": "Cerca file",
   "tab": {

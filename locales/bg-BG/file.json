@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "Изтеглете файла",
-    "unsupportedFileAndContact": "Този формат на файла не поддържа онлайн преглед. Ако имате нужда от преглед, моля, <1>свържете се с нас</1>."
+    "unsupportedFileAndContact": "Този формат на файла не поддържа онлайн преглед."
   },
   "searchFilePlaceholder": "Търсене на файл",
   "tab": {

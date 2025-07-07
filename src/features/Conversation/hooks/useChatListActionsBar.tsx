@@ -12,7 +12,6 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { isDeprecatedEdition } from '@/const/version';
 
 interface ChatListActionsBar {
   branching: ActionIconGroupItemType;
@@ -34,12 +33,10 @@ export const useChatListActionsBar = ({
   return useMemo(
     () => ({
       branching: {
-        disable: isDeprecatedEdition,
+        disable: true,
         icon: Split,
         key: 'branching',
-        label: !isDeprecatedEdition
-          ? t('branching', { defaultValue: 'Create Sub Topic' })
-          : t('branchingDisable'),
+        label: t('branchingDisable'),
       },
       copy: {
         icon: Copy,

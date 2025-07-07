@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "تحميل الملف",
-    "unsupportedFileAndContact": "هذا التنسيق من الملفات غير مدعوم للمعاينة عبر الإنترنت، إذا كان لديك طلب للمعاينة، فلا تتردد في <1>إبلاغنا</1>"
+    "unsupportedFileAndContact": "هذا التنسيق من الملفات غير مدعوم للمعاينة عبر الإنترنت"
   },
   "searchFilePlaceholder": "بحث عن ملف",
   "tab": {

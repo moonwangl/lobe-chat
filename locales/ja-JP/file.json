@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "ファイルをダウンロード",
-    "unsupportedFileAndContact": "このファイル形式はオンラインプレビューをサポートしていません。プレビューのリクエストがある場合は、ぜひ<1>ご連絡ください</1>。"
+    "unsupportedFileAndContact": "このファイル形式はオンラインプレビューをサポートしていません。"
   },
   "searchFilePlaceholder": "ファイルを検索",
   "tab": {

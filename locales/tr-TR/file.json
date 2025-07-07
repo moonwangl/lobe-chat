@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "Dosyayı İndir",
-    "unsupportedFileAndContact": "Bu dosya formatı çevrimiçi önizleme için desteklenmiyor. Önizleme talebiniz varsa, lütfen <1>bize geri bildirimde bulunun</1>."
+    "unsupportedFileAndContact": "Bu dosya formatı çevrimiçi önizleme için desteklenmiyor."
   },
   "searchFilePlaceholder": "Dosya Ara",
   "tab": {

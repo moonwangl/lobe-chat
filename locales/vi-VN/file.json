@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "Tải tệp",
-    "unsupportedFileAndContact": "Định dạng tệp này hiện không hỗ trợ xem trước trực tuyến. Nếu bạn có yêu cầu xem trước, vui lòng <1>phản hồi cho chúng tôi</1>"
+    "unsupportedFileAndContact": "Định dạng tệp này hiện không hỗ trợ xem trước trực tuyến."
   },
   "searchFilePlaceholder": "Tìm kiếm tệp",
   "tab": {

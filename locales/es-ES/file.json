@@ -59,7 +59,7 @@
   },
   "preview": {
     "downloadFile": "Descargar archivo",
-    "unsupportedFileAndContact": "Este formato de archivo no es compatible con la vista previa en línea. Si desea solicitar una vista previa, no dude en <1>contactarnos</1>."
+    "unsupportedFileAndContact": "Este formato de archivo no es compatible con la vista previa en línea."
   },
   "searchFilePlaceholder": "Buscar archivo",
   "tab": {

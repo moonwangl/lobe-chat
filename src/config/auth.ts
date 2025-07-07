@@ -205,6 +205,11 @@ export const getAuthConfig = () => {
       LOGTO_ISSUER: z.string().optional(),
       LOGTO_WEBHOOK_SIGNING_KEY: z.string().optional(),
 
+      // LOGTO (New AUTH_ prefixed variables)
+      AUTH_LOGTO_ID: z.string().optional(),
+      AUTH_LOGTO_SECRET: z.string().optional(),
+      AUTH_LOGTO_ISSUER: z.string().optional(),
+
       // Casdoor
       CASDOOR_WEBHOOK_SECRET: z.string().optional(),
     },
@@ -266,6 +271,11 @@ export const getAuthConfig = () => {
       LOGTO_CLIENT_SECRET: process.env.LOGTO_CLIENT_SECRET,
       LOGTO_ISSUER: process.env.LOGTO_ISSUER,
       LOGTO_WEBHOOK_SIGNING_KEY: process.env.LOGTO_WEBHOOK_SIGNING_KEY,
+
+      // LOGTO (New AUTH_ prefixed variables)
+      AUTH_LOGTO_ID: process.env.AUTH_LOGTO_ID,
+      AUTH_LOGTO_SECRET: process.env.AUTH_LOGTO_SECRET,
+      AUTH_LOGTO_ISSUER: process.env.AUTH_LOGTO_ISSUER,
 
       // Casdoor
       CASDOOR_WEBHOOK_SECRET: process.env.CASDOOR_WEBHOOK_SECRET,
