@@ -24,7 +24,6 @@ export const AssistantActionsBar: RenderAction = memo(({ onActionClick, error, t
     copy,
     divider,
     del,
-    branching,
     // export: exportPDF,
     // share, // Hidden per user request
   } = useChatListActionsBar({ hasThread });
@@ -38,7 +37,7 @@ export const AssistantActionsBar: RenderAction = memo(({ onActionClick, error, t
   const items = useMemo(() => {
     if (hasTools) return [delAndRegenerate, copy];
 
-    return [edit, copy, inThread ? null : branching].filter(Boolean) as ActionIconGroupItemType[];
+    return [edit, copy].filter(Boolean) as ActionIconGroupItemType[];
   }, [inThread, hasTools]);
 
   if (error) return <ErrorActionsBar onActionClick={onActionClick} />;
