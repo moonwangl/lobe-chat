@@ -1,0 +1,2 @@
+INSERT INTO "public"."knowledge_bases" ("id", "name", "description", "avatar", "type", "user_id", "is_public", "settings", "created_at", "updated_at", "accessed_at", "client_id") VALUES
+('kb_zeEDibbUYZSf', '郑州十五五规划', NULL, NULL, NULL, '8yteceglgqoy', 'f', NULL, '2025-06-26 17:22:47.861182+00', '2025-06-26 17:22:47.861182+00', '2025-06-26 17:22:47.861182+00', NULL);
