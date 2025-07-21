@@ -82,7 +82,7 @@ services:
       - 'APP_URL=http://localhost:3210'
       - 'NEXT_AUTH_SSO_PROVIDERS=logto'
       - 'KEY_VAULTS_SECRET=Kix2wcUONd4CX51E/ZPAd36BqM4wzJgKjPtz2sGztqQ='
-      - 'NEXT_AUTH_SECRET=NX2kaPE923dt6BL2U8e9oSre5RfoT7hg'
+      - 'NEXT_AUTH_SECRET=2a60e2370557f86f6e4b27013a30f380'
       - 'NEXTAUTH_URL=http://localhost:${LOBE_PORT}/api/auth'
       - 'DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgresql:5432/${LOBE_DB_NAME}'
       - 'S3_ENDPOINT=http://localhost:${MINIO_PORT}'
@@ -97,6 +97,7 @@ services:
       - 'AUTH_LOGTO_ID=${AUTH_LOGTO_ID}'  # Add this line
       - 'AUTH_LOGTO_SECRET=${AUTH_LOGTO_SECRET}'  # Add this line
       - 'AUTH_LOGTO_ISSUER=http://localhost:${LOGTO_PORT}/oidc'
+      - 'UVX_PLUGIN_SERVER=http://word-mcp:3000'
     env_file:
       - .env
     restart: always
