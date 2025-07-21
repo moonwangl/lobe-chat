@@ -276,5 +276,10 @@ export default {
       },
     },
   },
+  wordFunction: {
+    copyHtml: '复制为 HTML（适用于 Word）',
+    downloadMarkdown: '下载为 Markdown',
+    exportDocx: '导出为 DOCX',
+  },
   zenMode: '专注模式',
 };
