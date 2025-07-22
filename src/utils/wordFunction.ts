@@ -389,6 +389,26 @@ export const exportToDocx = async (
           },
         },
       ],
+      styles: {
+        paragraphStyles: [
+          {
+            basedOn: 'Normal',
+            id: 'Code',
+            name: 'Code',
+            paragraph: {
+              spacing: {
+                after: 0,
+                before: 0,
+              },
+            },
+            run: {
+              color: '000000',
+              font: 'Courier New',
+              size: 20, // 10pt
+            },
+          },
+        ],
+      },
     });
 
     const buffer = await Packer.toBlob(doc);
