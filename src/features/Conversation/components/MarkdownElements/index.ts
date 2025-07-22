@@ -1,3 +1,4 @@
+import { codeBlockWithButtons } from './CodeBlockWithButtons';
 import LobeArtifact from './LobeArtifact';
 import LobeThinking from './LobeThinking';
 import LocalFile from './LocalFile';
@@ -9,4 +10,5 @@ export const markdownElements: MarkdownElement[] = [
   LobeArtifact,
   LobeThinking,
   LocalFile,
+  codeBlockWithButtons,
 ];

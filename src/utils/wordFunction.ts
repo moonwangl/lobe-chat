@@ -21,8 +21,14 @@ export const extractMarkdownBlocks = (
     const lines = blockContent.split('\n');
     const language = lines[0] || 'text';
 
+    // Remove the language identifier from the first line if it exists
+    const actualContent =
+      lines.length > 1 && lines[0].trim() && !lines[0].includes(' ')
+        ? lines.slice(1).join('\n').trim()
+        : blockContent;
+
     blocks.push({
-      content: blockContent,
+      content: actualContent,
       type: `code-${language}`,
     });
   }
@@ -202,12 +208,19 @@ export const downloadAsMarkdown = (content: string, filename: string = 'document
 
 /**
  * Copy content as HTML to clipboard
- * @param content - The markdown content to convert and copy
+ * @param content - The message content to extract markdown blocks from and convert to HTML
  * @returns Promise that resolves when content is copied
  */
 export const copyAsHtml = async (content: string): Promise<void> => {
   try {
-    const html = markdownToHtml(content);
+    // Extract markdown blocks from the content
+    const blocks = extractMarkdownBlocks(content);
+
+    // Combine all extracted block content
+    const markdownContent = blocks.map((block) => block.content).join('\n\n');
+
+    // Convert the extracted markdown content to HTML
+    const html = markdownToHtml(markdownContent);
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       // Use modern clipboard API if available

@@ -1,15 +1,10 @@
 import { ActionIcon } from '@lobehub/ui';
-import { Copy, Download, FileText } from 'lucide-react';
+import { Copy, Download } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
-import {
-  copyAsHtml,
-  downloadAsMarkdown,
-  exportToDocx,
-  hasMarkdownBlocks,
-} from '@/utils/wordFunction';
+import { copyAsHtml, exportToDocx, hasMarkdownBlocks } from '@/utils/wordFunction';
 
 interface WordFunctionButtonsProps {
   content: string;
@@ -35,16 +30,6 @@ const WordFunctionButtons = memo<WordFunctionButtonsProps>(({ content, messageId
       setIsExporting(false);
     }
   }, [content, messageId, isExporting]);
-
-  const handleDownloadMarkdown = useCallback(() => {
-    try {
-      const filename = messageId ? `message-${messageId}.md` : 'document.md';
-      downloadAsMarkdown(content, filename);
-    } catch (error) {
-      console.error('Failed to download markdown:', error);
-      // You might want to show a toast notification here
-    }
-  }, [content, messageId]);
 
   const handleCopyHtml = useCallback(async () => {
     if (isCopying) return;
@@ -74,12 +59,6 @@ const WordFunctionButtons = memo<WordFunctionButtonsProps>(({ content, messageId
         onClick={handleExportDocx}
         size="small"
         title={t('wordFunction.exportDocx', { defaultValue: 'Export as DOCX' })}
-      />
-      <ActionIcon
-        icon={FileText}
-        onClick={handleDownloadMarkdown}
-        size="small"
-        title={t('wordFunction.downloadMarkdown', { defaultValue: 'Download as Markdown' })}
       />
       <ActionIcon
         icon={Copy}

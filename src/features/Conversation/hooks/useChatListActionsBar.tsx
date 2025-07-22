@@ -3,6 +3,7 @@ import {
   Copy,
   DownloadIcon,
   Edit,
+  FileText,
   ListRestart,
   RotateCcw,
   Share2,
@@ -12,13 +13,13 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-
 interface ChatListActionsBar {
   branching: ActionIconGroupItemType;
   copy: ActionIconGroupItemType;
   del: ActionIconGroupItemType;
   delAndRegenerate: ActionIconGroupItemType;
   divider: { type: 'divider' };
+  downloadMarkdown: ActionIconGroupItemType;
   edit: ActionIconGroupItemType;
   export: ActionIconGroupItemType;
   regenerate: ActionIconGroupItemType;
@@ -61,6 +62,11 @@ export const useChatListActionsBar = ({
       },
       divider: {
         type: 'divider',
+      },
+      downloadMarkdown: {
+        icon: FileText,
+        key: 'downloadMarkdown',
+        label: t('downloadMarkdown', { defaultValue: 'Download as Markdown', ns: 'chat' }),
       },
       edit: {
         icon: Edit,
