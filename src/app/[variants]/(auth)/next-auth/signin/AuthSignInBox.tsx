@@ -6,6 +6,7 @@ import { Col, Flex, Row, Skeleton, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { AuthError } from 'next-auth';
 import { signIn } from 'next-auth/react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -115,10 +116,12 @@ export default memo(() => {
             <Title className={styles.title} level={4}>
               <div>
                 {BRANDING_LOGO_URL ? (
-                  <img
+                  <Image
                     alt={BRANDING_NAME}
+                    height={48}
                     src={BRANDING_LOGO_URL}
-                    style={{ height: 48, objectFit: 'contain', width: 48 }}
+                    style={{ objectFit: 'contain' }}
+                    width={48}
                   />
                 ) : (
                   <LobeChat size={48} />
