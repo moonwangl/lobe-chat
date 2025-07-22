@@ -14,7 +14,7 @@ const useStyles = createStyles(({ css, cx }) => ({
   action: cx(
     css`
       align-self: flex-end;
-      opacity: 0;
+      opacity: 1;
     `,
     'rag-query-actions',
   ),

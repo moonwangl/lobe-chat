@@ -79,3 +79,4 @@ vertex-ai-key.json
 /docker-compose/local/s3_data
 /docker-compose/custom/logto/data
 /docker-compose/custom/logto/s3_data
+/docker-compose/custom/logto/dev-data
