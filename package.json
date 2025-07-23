@@ -320,6 +320,7 @@
     "crypto-js": "^4.2.0",
     "dbdocs": "^0.14.4",
     "dotenv": "^16.5.0",
+    "dotenv-cli": "^9.0.0",
     "dpdm-fast": "^1.0.7",
     "drizzle-dbml-generator": "^0.10.0",
     "drizzle-kit": "^0.30.6",
