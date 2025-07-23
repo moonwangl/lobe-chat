@@ -116,6 +116,30 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'cdn.meridian-reports.com',
+        pathname: '/**',
+        protocol: 'https',
+      },
+      {
+        hostname: 'icons.duckduckgo.com',
+        pathname: '/**',
+        protocol: 'https',
+      },
+      {
+        hostname: 'github.com',
+        pathname: '/user-attachments/**',
+        protocol: 'https',
+      },
+      {
+        hostname: 's3-for-lobechat.your-domain.com',
+        pathname: '/**',
+        protocol: 'https',
+      },
+    ],
+  },
   logging: {
     fetches: {
       fullUrl: true,
