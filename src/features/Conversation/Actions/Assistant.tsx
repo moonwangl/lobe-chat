@@ -7,7 +7,6 @@ import { useChatStore } from '@/store/chat';
 import { threadSelectors } from '@/store/chat/selectors';
 import { copyAsHtml, downloadAsMarkdown, exportToDocx } from '@/utils/wordFunction';
 
-import WordFunctionButtons from '../components/WordFunctionButtons';
 import { useChatListActionsBar } from '../hooks/useChatListActionsBar';
 import { RenderAction } from '../types';
 import { ErrorActionsBar } from './Error';
@@ -136,7 +135,7 @@ export const AssistantActionsBar: RenderAction = memo(
           }}
           onActionClick={handleActionClick}
         />
-        <WordFunctionButtons content={content || ''} messageId={id} />
+        {/* <WordFunctionButtons content={content || ''} messageId={id} /> */}
       </Flexbox>
     );
   },
