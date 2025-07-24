@@ -24,10 +24,10 @@ const defaultLeftActions: ActionKeys[] = [
   'search',
   'fileUpload',
   'knowledgeBase',
-  'history',
-  'tools',
-  'params',
-  'mainToken',
+  // 'history',
+  // 'tools',
+  // 'params',
+  // 'mainToken',
 ];
 
 const defaultRightActions: ActionKeys[] = ['clear'];

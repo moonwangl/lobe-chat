@@ -15,11 +15,11 @@ const leftActions = [
   'search',
   'fileUpload',
   'knowledgeBase',
-  'params',
-  'history',
+  // 'params',
+  // 'history',
   'stt',
-  'tools',
-  'mainToken',
+  // 'tools',
+  // 'mainToken',
 ] as ActionKeys[];
 
 const rightActions = ['clear'] as ActionKeys[];

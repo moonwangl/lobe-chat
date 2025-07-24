@@ -26,34 +26,34 @@ export default () => css`
     }
   }
 
-  /* Ensure chat item action bars are always visible */
-  [class*='ChatItem'] {
-    [class*='actionBar'],
-    [class*='ActionsBar'],
-    [class*='actions'] {
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-  }
-
-  /* Additional comprehensive overrides for action button visibility */
-  [class*='ChatItem']:hover [class*='actionBar'],
-  [class*='ChatItem']:hover [class*='ActionsBar'],
-  [class*='ChatItem']:hover [class*='actions'],
-  [class*='ChatItem'] [class*='actionBar']:hover,
-  [class*='ChatItem'] [class*='ActionsBar']:hover,
-  [class*='ChatItem'] [class*='actions']:hover {
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
   /* Force visibility for all action-related elements */
   [class*='action'] {
     visibility: visible !important;
     opacity: 1 !important;
   }
 
-  /* Override any hover states that might hide actions */
+  /* Base ChatItem action visibility and layout - must come before more specific selectors */
+  [class*='ChatItem'] [class*='actionBar'],
+  [class*='ChatItem'] [class*='ActionsBar'],
+  [class*='ChatItem'] [class*='actions'] {
+    justify-content: flex-start !important;
+    order: 2 !important;
+
+    width: 100% !important;
+    margin-block-start: 8px !important;
+    margin-inline: 0 !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* More specific ChatItem action visibility overrides */
+  [class*='ChatItem']:hover [class*='actionBar'],
+  [class*='ChatItem']:hover [class*='ActionsBar'],
+  [class*='ChatItem']:hover [class*='actions'],
+  [class*='ChatItem'] [class*='actionBar']:hover,
+  [class*='ChatItem'] [class*='ActionsBar']:hover,
+  [class*='ChatItem'] [class*='actions']:hover,
   [class*='ChatItem']:not(:hover) [class*='actionBar'],
   [class*='ChatItem']:not(:hover) [class*='ActionsBar'],
   [class*='ChatItem']:not(:hover) [class*='actions'] {
@@ -96,5 +96,24 @@ export default () => css`
   [role='menubar'] * {
     visibility: visible !important;
     opacity: 1 !important;
+  }
+
+  /* ChatItem layout: move action bar below the chat bubble */
+  [class*='ChatItem'] {
+    flex-direction: column !important;
+  }
+
+  /* Ensure message content comes first */
+  [class*='ChatItem'] [class*='message'],
+  [class*='ChatItem'] [class*='bubble'],
+  [class*='ChatItem'] [class*='content'] {
+    order: 1 !important;
+  }
+
+  /* For right-aligned user messages, keep actions aligned to the right */
+  [class*='ChatItem'][class*='right'] [class*='actionBar'],
+  [class*='ChatItem'][class*='right'] [class*='ActionsBar'],
+  [class*='ChatItem'][class*='right'] [class*='actions'] {
+    justify-content: flex-end !important;
   }
 `;
