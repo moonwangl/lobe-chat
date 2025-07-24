@@ -277,9 +277,9 @@ export default {
     },
   },
   wordFunction: {
-    copyHtml: '复制为 HTML（适用于 Word）',
-    downloadMarkdown: '下载为 Markdown',
-    exportDocx: '导出为 DOCX',
+    copyHtml: '复制到Word文档',
+    downloadMarkdown: '下载Markdown',
+    exportDocx: '导出Word文档',
   },
   zenMode: '专注模式',
 };

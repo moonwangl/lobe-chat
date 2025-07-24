@@ -1,6 +1,7 @@
 import type { ActionIconGroupItemType } from '@lobehub/ui';
 import {
   Copy,
+  Download,
   DownloadIcon,
   Edit,
   FileText,
@@ -16,12 +17,14 @@ import { useTranslation } from 'react-i18next';
 interface ChatListActionsBar {
   branching: ActionIconGroupItemType;
   copy: ActionIconGroupItemType;
+  copyHtml: ActionIconGroupItemType;
   del: ActionIconGroupItemType;
   delAndRegenerate: ActionIconGroupItemType;
   divider: { type: 'divider' };
   downloadMarkdown: ActionIconGroupItemType;
   edit: ActionIconGroupItemType;
   export: ActionIconGroupItemType;
+  exportDocx: ActionIconGroupItemType;
   regenerate: ActionIconGroupItemType;
   share: ActionIconGroupItemType;
 }
@@ -43,6 +46,11 @@ export const useChatListActionsBar = ({
         icon: Copy,
         key: 'copy',
         label: t('copy', { defaultValue: 'Copy' }),
+      },
+      copyHtml: {
+        icon: Copy,
+        key: 'copyHtml',
+        label: t('wordFunction.copyHtml', { defaultValue: 'Copy as HTML for Word', ns: 'chat' }),
       },
       del: {
         danger: true,
@@ -76,7 +84,12 @@ export const useChatListActionsBar = ({
       export: {
         icon: DownloadIcon,
         key: 'export',
-        label: '导出为 PDF',
+        label: 'Export PDF',
+      },
+      exportDocx: {
+        icon: Download,
+        key: 'exportDocx',
+        label: t('wordFunction.exportDocx', { defaultValue: 'Download DOCX', ns: 'chat' }),
       },
       regenerate: {
         icon: RotateCcw,

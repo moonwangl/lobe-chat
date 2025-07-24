@@ -272,5 +272,10 @@
       }
     }
   },
+  "wordFunction": {
+    "copyHtml": "复制到Word文档",
+    "exportDocx": "导出Word文档",
+    "downloadMarkdown": "下载Markdown"
+  },
   "zenMode": "专注模式"
 }

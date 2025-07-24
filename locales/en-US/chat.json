@@ -272,5 +272,10 @@
       }
     }
   },
+  "wordFunction": {
+    "copyHtml": "Copy as HTML for Word",
+    "exportDocx": "Download DOCX",
+    "downloadMarkdown": "Download Markdown"
+  },
   "zenMode": "Zen Mode"
 }

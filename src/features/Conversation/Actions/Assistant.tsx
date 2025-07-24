@@ -1,13 +1,12 @@
-import { ActionIconGroup } from '@lobehub/ui';
+import { ActionIconGroup, Icon } from '@lobehub/ui';
 import type { ActionIconGroupEvent, ActionIconGroupItemType } from '@lobehub/ui';
-import { memo, useCallback, useContext, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Flexbox } from 'react-layout-kit';
 
 import { useChatStore } from '@/store/chat';
 import { threadSelectors } from '@/store/chat/selectors';
-import { downloadAsMarkdown } from '@/utils/wordFunction';
+import { copyAsHtml, downloadAsMarkdown, exportToDocx } from '@/utils/wordFunction';
 
-import { InPortalThreadContext } from '../components/ChatItem/InPortalThreadContext';
 import WordFunctionButtons from '../components/WordFunctionButtons';
 import { useChatListActionsBar } from '../hooks/useChatListActionsBar';
 import { RenderAction } from '../types';
@@ -26,6 +25,25 @@ export const AssistantActionsBar: RenderAction = memo(
       }
     }, [content, id]);
 
+    // Handle export DOCX action
+    const handleExportDocx = useCallback(() => {
+      try {
+        const filename = id ? `message-${id}.docx` : 'document.docx';
+        exportToDocx(content || '', filename);
+      } catch (error) {
+        console.error('Failed to export DOCX:', error);
+      }
+    }, [content, id]);
+
+    // Handle copy HTML action
+    const handleCopyHtml = useCallback(() => {
+      try {
+        copyAsHtml(content || '');
+      } catch (error) {
+        console.error('Failed to copy HTML:', error);
+      }
+    }, [content]);
+
     // Enhanced action click handler
     const handleActionClick = useCallback(
       (action: ActionIconGroupEvent) => {
@@ -33,23 +51,29 @@ export const AssistantActionsBar: RenderAction = memo(
           handleDownloadMarkdown();
           return;
         }
+        if (action.key === 'exportDocx') {
+          handleExportDocx();
+          return;
+        }
+        if (action.key === 'copyHtml') {
+          handleCopyHtml();
+          return;
+        }
         onActionClick?.(action);
       },
-      [handleDownloadMarkdown, onActionClick],
+      [handleDownloadMarkdown, handleExportDocx, handleCopyHtml, onActionClick],
     );
-    const [isThreadMode, hasThread] = useChatStore((s) => [
-      !!s.activeThreadId,
-      threadSelectors.hasThreadBySourceMsgId(id)(s),
-    ]);
+    const hasThread = useChatStore((s) => threadSelectors.hasThreadBySourceMsgId(id)(s));
 
     const {
       regenerate,
       edit,
       delAndRegenerate,
       copy,
-      divider,
+      copyHtml,
       del,
       downloadMarkdown,
+      exportDocx,
       // export: exportPDF,
       // share, // Hidden per user request
     } = useChatListActionsBar({ hasThread });
@@ -57,14 +81,11 @@ export const AssistantActionsBar: RenderAction = memo(
     const { translate, tts } = useCustomActions();
     const hasTools = !!tools;
 
-    const inPortalThread = useContext(InPortalThreadContext);
-    const inThread = isThreadMode || inPortalThread;
-
     const items = useMemo(() => {
       if (hasTools) return [delAndRegenerate, copy];
 
-      return [edit, copy].filter(Boolean) as ActionIconGroupItemType[];
-    }, [inThread, hasTools]);
+      return [edit, exportDocx, copyHtml].filter(Boolean) as ActionIconGroupItemType[];
+    }, [edit, exportDocx, copyHtml, hasTools]);
 
     if (error) return <ErrorActionsBar onActionClick={onActionClick} />;
 
@@ -74,19 +95,43 @@ export const AssistantActionsBar: RenderAction = memo(
           items={items}
           menu={{
             items: [
-              edit,
-              copy,
-              downloadMarkdown,
-              divider,
-              tts,
-              translate,
-              divider,
-              // share, // Hidden per user request
-              // exportPDF,
-              divider,
-              regenerate,
-              delAndRegenerate,
-              del,
+              {
+                icon: <Icon icon={copy.icon} />,
+                key: copy.key,
+                label: copy.label,
+              },
+              {
+                icon: <Icon icon={downloadMarkdown.icon} />,
+                key: downloadMarkdown.key,
+                label: downloadMarkdown.label,
+              },
+              {
+                type: 'divider',
+              },
+              {
+                icon: <Icon icon={tts.icon} />,
+                key: tts.key,
+                label: tts.label,
+              },
+              {
+                icon: <Icon icon={translate.icon} />,
+                key: translate.key,
+                label: translate.label,
+              },
+              {
+                type: 'divider',
+              },
+              {
+                icon: <Icon icon={regenerate.icon} />,
+                key: regenerate.key,
+                label: regenerate.label,
+              },
+              {
+                danger: del.danger,
+                icon: <Icon icon={del.icon} />,
+                key: del.key,
+                label: del.label,
+              },
             ],
           }}
           onActionClick={handleActionClick}
