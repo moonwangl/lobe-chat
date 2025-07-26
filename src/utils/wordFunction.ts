@@ -1,7 +1,6 @@
 import {
   AlignmentType,
   Document,
-  HeadingLevel,
   NumberFormat,
   Packer,
   Paragraph,
@@ -319,37 +318,6 @@ const parseInlineFormatting = (text: string): TextRun[] => {
 };
 
 /**
- * Get Word heading level from markdown header level
- * @param level - Markdown header level (1-6)
- * @returns Word HeadingLevel
- */
-const getHeadingLevel = (level: number) => {
-  switch (level) {
-    case 1: {
-      return HeadingLevel.HEADING_1;
-    }
-    case 2: {
-      return HeadingLevel.HEADING_2;
-    }
-    case 3: {
-      return HeadingLevel.HEADING_3;
-    }
-    case 4: {
-      return HeadingLevel.HEADING_4;
-    }
-    case 5: {
-      return HeadingLevel.HEADING_5;
-    }
-    case 6: {
-      return HeadingLevel.HEADING_6;
-    }
-    default: {
-      return HeadingLevel.HEADING_1;
-    }
-  }
-};
-
-/**
  * Export content to DOCX format with proper Word formatting
  * @param content - The content to export
  * @param filename - The filename for the exported file
@@ -368,23 +336,34 @@ export const exportToDocx = async (
     for (const block of blocks) {
       switch (block.type) {
         case 'header': {
-          // Add proper Word heading with inline formatting
+          // Add proper Word heading with inline formatting for GB/T 9704—2012
           const headerRuns = parseInlineFormatting(block.content);
-          // Make all header text bold
-          headerRuns.forEach((run) => {
-            (run as any).bold = true;
-          });
 
-          docParagraphs.push(
-            new Paragraph({
-              children: headerRuns,
-              heading: getHeadingLevel(block.level || 1),
-              spacing: {
-                after: 240, // 12pt
-                before: 240, // 12pt
-              },
-            }),
-          );
+          // Use Title style for main headers (level 1), otherwise use bold body text
+          if (block.level === 1) {
+            docParagraphs.push(
+              new Paragraph({
+                children: headerRuns,
+                style: 'Title', // 居中，小三号字，粗体
+              }),
+            );
+          } else {
+            // Make all header text bold for sub-headers
+            headerRuns.forEach((run) => {
+              (run as any).bold = true;
+            });
+
+            docParagraphs.push(
+              new Paragraph({
+                children: headerRuns,
+                spacing: {
+                  after: 280, // 14pt after sub-headers
+                  before: 280, // 14pt before sub-headers
+                },
+                style: 'BodyText',
+              }),
+            );
+          }
           break;
         }
 
@@ -443,7 +422,7 @@ export const exportToDocx = async (
                   level: currentLevel,
                   reference: 'numbered-list',
                 },
-                spacing: { after: 120 }, // 6pt
+                style: 'BodyText',
               }),
             );
           } else {
@@ -459,7 +438,7 @@ export const exportToDocx = async (
                 indent: {
                   left: indent,
                 },
-                spacing: { after: 120 }, // 6pt
+                style: 'BodyText',
               }),
             );
           }
@@ -481,6 +460,7 @@ export const exportToDocx = async (
                     new Paragraph({
                       children: cellRuns,
                       spacing: { after: 120, before: 120 },
+                      style: 'BodyText',
                     }),
                   ],
                   margins: {
@@ -535,7 +515,7 @@ export const exportToDocx = async (
         }
 
         default: {
-          // Add regular paragraph with inline formatting
+          // Add regular paragraph with inline formatting using GB/T 9704—2012 body text style
           const textLines = block.content.split('\n');
           for (const line of textLines) {
             if (line.trim()) {
@@ -543,7 +523,7 @@ export const exportToDocx = async (
               docParagraphs.push(
                 new Paragraph({
                   children: textRuns,
-                  spacing: { after: 120 }, // 6pt
+                  style: 'BodyText', // 四号字，两端对齐，28pt行距
                 }),
               );
             }
@@ -601,32 +581,109 @@ export const exportToDocx = async (
           children: docParagraphs,
           properties: {
             page: {
-              margin: {
-                bottom: 1440,
-                left: 1440,
-                right: 1440,
-                top: 1440, // 1 inch
+              
+              // GB/T 9704—2012 margins: top 37mm, bottom 34mm, left 28mm, right 26mm
+margin: {
+                // 37mm in DXA (37 * 56.7)
+bottom: 1928, 
+                // 34mm in DXA (34 * 56.7)
+left: 1588, 
+                // 28mm in DXA (28 * 56.7)
+right: 1474, 
+                top: 2098, // 26mm in DXA (26 * 56.7)
+              },
+              
+              // A4 paper size (210mm x 297mm)
+size: {
+                // 210mm in DXA (210 * 56.7)
+height: 16_838, 
+                width: 11_906, // 297mm in DXA (297 * 56.7)
               },
             },
           },
         },
       ],
       styles: {
+        default: {
+          document: {
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              spacing: {
+                line: 560, // 28pt fixed line height (28 * 20)
+                lineRule: 'exact',
+              }, // 两端对齐
+            },
+            run: {
+              font: 'SimSun', // 宋体 for GB/T 9704—2012
+              size: 24, // 四号字 (12pt)
+            },
+          },
+        },
         paragraphStyles: [
           {
             basedOn: 'Normal',
             id: 'Code',
             name: 'Code',
             paragraph: {
+              alignment: AlignmentType.LEFT,
               spacing: {
-                after: 0,
+                after: 0, 
                 before: 0,
+                
+line: 560,
+                // 28pt fixed line height
+lineRule: 'exact',
               },
             },
             run: {
               color: '000000',
               font: 'Courier New',
-              size: 20, // 10pt
+              size: 20, // 10pt for code
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Title',
+            name: 'Title',
+            paragraph: {
+              alignment: AlignmentType.CENTER,
+              spacing: {
+                after: 280, 
+                // 14pt after
+before: 280,
+                
+
+line: 560, 
+                // 28pt fixed line height
+lineRule: 'exact', // 14pt before
+              }, // 居中对齐
+            },
+            run: {
+              // 小三号字 (15pt)
+bold: true,
+              
+font: 'SimSun', 
+              size: 30,
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'BodyText',
+            name: 'BodyText',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              spacing: {
+                after: 0, 
+                before: 0,
+                
+line: 560,
+                // 28pt fixed line height
+lineRule: 'exact',
+              }, // 两端对齐
+            },
+            run: {
+              font: 'SimSun',
+              size: 24, // 四号字 (12pt)
             },
           },
         ],
@@ -657,20 +714,176 @@ export const downloadAsMarkdown = (content: string, filename: string = 'document
 };
 
 /**
- * Copy content as HTML to clipboard
+ * Convert parsed markdown blocks to HTML with GB/T 9704—2012 formatting
+ * @param blocks - Array of parsed markdown blocks
+ * @returns HTML string with inline CSS for GB/T 9704—2012 compliance
+ */
+const blocksToHtml = (
+  blocks: Array<{
+    content: string;
+    level?: number;
+    listType?: 'bullet' | 'numbered';
+    tableData?: string[][];
+    type: string;
+  }>,
+): string => {
+  const htmlParts: string[] = [];
+
+  // Add CSS styles for GB/T 9704—2012 format
+  const gbStyles = `
+    <style>
+      body {
+        font-family: 'SimSun', '宋体', serif;
+        font-size: 12pt; /* 四号字 */
+        line-height: 28pt; /* 28pt固定行距 */
+        text-align: justify; /* 两端对齐 */
+        margin: 0;
+        padding: 0;
+      }
+      .gb-title {
+        font-family: 'SimSun', '宋体', serif;
+        font-size: 15pt; /* 小三号字 */
+        font-weight: bold;
+        text-align: center; /* 居中对齐 */
+        line-height: 28pt;
+        margin: 14pt 0;
+      }
+      .gb-body {
+        font-family: 'SimSun', '宋体', serif;
+        font-size: 12pt; /* 四号字 */
+        line-height: 28pt;
+        text-align: justify; /* 两端对齐 */
+        margin: 0;
+      }
+      .gb-code {
+        font-family: 'Courier New', monospace;
+        font-size: 10pt;
+        line-height: 28pt;
+        text-align: left;
+        background-color: #f5f5f5;
+        padding: 6pt;
+        margin: 6pt 0;
+      }
+      .gb-table {
+        font-family: 'SimSun', '宋体', serif;
+        font-size: 12pt;
+        line-height: 28pt;
+        border-collapse: collapse;
+        width: 100%;
+        margin: 14pt 0;
+      }
+      .gb-table th, .gb-table td {
+        border: 1pt solid black;
+        padding: 6pt;
+        text-align: center;
+      }
+      .gb-table th {
+        font-weight: bold;
+        background-color: #f0f0f0;
+      }
+      .gb-list {
+        font-family: 'SimSun', '宋体', serif;
+        font-size: 12pt;
+        line-height: 28pt;
+        text-align: justify;
+        margin: 0;
+        padding-left: 24pt;
+      }
+    </style>
+  `;
+
+  htmlParts.push(gbStyles);
+
+  for (const block of blocks) {
+    switch (block.type) {
+      case 'header': {
+        const level = block.level || 1;
+        if (level === 1) {
+          // Main title - 居中，小三号字，粗体
+          htmlParts.push(`<h1 class="gb-title">${block.content}</h1>`);
+        } else {
+          // Sub-headers - 四号字，粗体，两端对齐
+          htmlParts.push(
+            `<h${Math.min(level, 6)} class="gb-body" style="font-weight: bold; margin: 14pt 0;">${block.content}</h${Math.min(level, 6)}>`,
+          );
+        }
+        break;
+      }
+
+      case 'code': {
+        htmlParts.push(`<pre class="gb-code"><code>${block.content}</code></pre>`);
+        break;
+      }
+
+      case 'list': {
+        const listTag = block.listType === 'numbered' ? 'ol' : 'ul';
+        const indent = '  '.repeat(block.level || 0);
+        htmlParts.push(
+          `${indent}<${listTag} class="gb-list">\n${indent}  <li>${block.content}</li>\n${indent}</${listTag}>`,
+        );
+        break;
+      }
+
+      case 'table': {
+        if (block.tableData && block.tableData.length > 0) {
+          let tableHtml = '<table class="gb-table">\n';
+
+          block.tableData.forEach((row, rowIndex) => {
+            const cellTag = rowIndex === 0 ? 'th' : 'td';
+            tableHtml += '  <tr>\n';
+            row.forEach((cell) => {
+              tableHtml += `    <${cellTag}>${cell}</${cellTag}>\n`;
+            });
+            tableHtml += '  </tr>\n';
+          });
+
+          tableHtml += '</table>';
+          htmlParts.push(tableHtml);
+        }
+        break;
+      }
+
+      default: {
+        // Convert inline markdown formatting to HTML
+        let htmlContent = block.content
+          .replaceAll(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replaceAll(/\*(.*?)\*/g, '<em>$1</em>')
+          .replaceAll(/`(.*?)`/g, '<code style="font-family: Courier New, monospace;">$1</code>');
+
+        htmlParts.push(`<p class="gb-body">${htmlContent}</p>`);
+        break;
+      }
+    }
+  }
+
+  return htmlParts.join('\n');
+};
+
+/**
+ * Copy content as HTML to clipboard with GB/T 9704—2012 formatting
  * @param content - The message content to extract markdown blocks from and convert to HTML
  * @returns Promise that resolves when content is copied
  */
 export const copyAsHtml = async (content: string): Promise<void> => {
   try {
-    // Extract markdown blocks from the content
-    const blocks = extractMarkdownBlocks(content);
+    // Parse markdown content into structured blocks
+    const blocks = parseMarkdownContent(content);
 
-    // Combine all extracted block content
-    const markdownContent = blocks.map((block) => block.content).join('\n\n');
+    // Convert blocks to HTML with GB/T 9704—2012 formatting
+    const bodyContent = blocksToHtml(blocks);
 
-    // Convert the extracted markdown content to HTML
-    const html = markdownToHtml(markdownContent);
+    // Wrap in complete HTML document structure for proper Word import
+    const html = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GB/T 9704—2012 Document</title>
+</head>
+<body>
+${bodyContent}
+</body>
+</html>`;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       // Use modern clipboard API if available
