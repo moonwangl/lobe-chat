@@ -322,12 +322,35 @@ const parseInlineFormatting = (text: string): TextRun[] => {
  * @param content - The content to export
  * @param filename - The filename for the exported file
  */
+/**
+ * Extract content between the first and last --- markers
+ * @param content - The full content string
+ * @returns The filtered content between --- markers
+ */
+const extractContentBetweenMarkers = (content: string): string => {
+  const lines = content.split('\n');
+  const firstMarkerIndex = lines.findIndex((line) => line.trim() === '---');
+  const lastMarkerIndex = lines.lastIndexOf('---');
+
+  // If no markers found or only one marker, return original content
+  if (firstMarkerIndex === -1 || lastMarkerIndex === -1 || firstMarkerIndex === lastMarkerIndex) {
+    return content;
+  }
+
+  // Extract content between markers (excluding the marker lines themselves)
+  const extractedLines = lines.slice(firstMarkerIndex + 1, lastMarkerIndex);
+  return extractedLines.join('\n');
+};
+
 export const exportToDocx = async (
   content: string,
   filename: string = 'document.docx',
 ): Promise<void> => {
   try {
-    const blocks = parseMarkdownContent(content);
+    // Filter content to only include text between first and last --- markers
+    const filteredContent = extractContentBetweenMarkers(content);
+
+    const blocks = parseMarkdownContent(filteredContent);
     const docParagraphs: Paragraph[] = [];
 
     let lastListLevel = -1;
@@ -339,31 +362,37 @@ export const exportToDocx = async (
           // Add proper Word heading with inline formatting for GB/T 9704—2012
           const headerRuns = parseInlineFormatting(block.content);
 
-          // Use Title style for main headers (level 1), otherwise use bold body text
-          if (block.level === 1) {
-            docParagraphs.push(
-              new Paragraph({
-                children: headerRuns,
-                style: 'Title', // 居中，小三号字，粗体
-              }),
-            );
-          } else {
-            // Make all header text bold for sub-headers
-            headerRuns.forEach((run) => {
-              (run as any).bold = true;
-            });
-
-            docParagraphs.push(
-              new Paragraph({
-                children: headerRuns,
-                spacing: {
-                  after: 280, // 14pt after sub-headers
-                  before: 280, // 14pt before sub-headers
-                },
-                style: 'BodyText',
-              }),
-            );
+          // Use appropriate heading styles based on level
+          let headingStyle = 'BodyText';
+          switch (block.level) {
+            case 1: {
+              headingStyle = 'Heading1'; // 黑体字
+              break;
+            }
+            case 2: {
+              headingStyle = 'Heading2'; // 楷体字
+              break;
+            }
+            case 3: {
+              headingStyle = 'Heading3'; // 仿宋体字
+              break;
+            }
+            case 4: {
+              headingStyle = 'Heading4'; // 仿宋体字
+              break;
+            }
+            default: {
+              headingStyle = 'BodyText';
+              break;
+            }
           }
+
+          docParagraphs.push(
+            new Paragraph({
+              children: headerRuns,
+              style: headingStyle,
+            }),
+          );
           break;
         }
 
@@ -581,22 +610,21 @@ export const exportToDocx = async (
           children: docParagraphs,
           properties: {
             page: {
-              
               // GB/T 9704—2012 margins: top 37mm, bottom 34mm, left 28mm, right 26mm
-margin: {
+              margin: {
                 // 37mm in DXA (37 * 56.7)
-bottom: 1928, 
+                bottom: 1928,
                 // 34mm in DXA (34 * 56.7)
-left: 1588, 
+                left: 1588,
                 // 28mm in DXA (28 * 56.7)
-right: 1474, 
+                right: 1474,
                 top: 2098, // 26mm in DXA (26 * 56.7)
               },
-              
+
               // A4 paper size (210mm x 297mm)
-size: {
+              size: {
                 // 210mm in DXA (210 * 56.7)
-height: 16_838, 
+                height: 16_838,
                 width: 11_906, // 297mm in DXA (297 * 56.7)
               },
             },
@@ -608,14 +636,17 @@ height: 16_838,
           document: {
             paragraph: {
               alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进 (2 * 283.5 DXA)
+              },
               spacing: {
                 line: 560, // 28pt fixed line height (28 * 20)
                 lineRule: 'exact',
               }, // 两端对齐
             },
             run: {
-              font: 'SimSun', // 宋体 for GB/T 9704—2012
-              size: 24, // 四号字 (12pt)
+              font: 'FangSong', // 仿宋体
+              size: 32, // 3号字 (16pt)
             },
           },
         },
@@ -627,12 +658,12 @@ height: 16_838,
             paragraph: {
               alignment: AlignmentType.LEFT,
               spacing: {
-                after: 0, 
+                after: 0,
                 before: 0,
-                
-line: 560,
+
+                line: 560,
                 // 28pt fixed line height
-lineRule: 'exact',
+                lineRule: 'exact',
               },
             },
             run: {
@@ -648,21 +679,20 @@ lineRule: 'exact',
             paragraph: {
               alignment: AlignmentType.CENTER,
               spacing: {
-                after: 280, 
+                after: 280,
                 // 14pt after
-before: 280,
-                
+                before: 280,
 
-line: 560, 
+                line: 560,
                 // 28pt fixed line height
-lineRule: 'exact', // 14pt before
+                lineRule: 'exact', // 14pt before
               }, // 居中对齐
             },
             run: {
               // 小三号字 (15pt)
-bold: true,
-              
-font: 'SimSun', 
+              bold: true,
+
+              font: 'SimSun',
               size: 30,
             },
           },
@@ -672,18 +702,109 @@ font: 'SimSun',
             name: 'BodyText',
             paragraph: {
               alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进 (2 * 283.5 DXA)
+              },
               spacing: {
-                after: 0, 
+                after: 0,
                 before: 0,
-                
-line: 560,
+
+                line: 560,
                 // 28pt fixed line height
-lineRule: 'exact',
+                lineRule: 'exact',
               }, // 两端对齐
             },
             run: {
-              font: 'SimSun',
-              size: 24, // 四号字 (12pt)
+              font: 'FangSong', // 仿宋体
+              size: 32, // 3号字 (16pt)
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Heading1',
+            name: 'Heading1',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              // 3号字
+bold: true, 
+              
+font: 'SimHei', 
+              // 黑体
+size: 32,
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Heading2',
+            name: 'Heading2',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'KaiTi', // 楷体
+              size: 32, // 3号字
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Heading3',
+            name: 'Heading3',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'FangSong', // 仿宋体
+              size: 32, // 3号字
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Heading4',
+            name: 'Heading4',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED,
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'FangSong', // 仿宋体
+              size: 32, // 3号字
             },
           },
         ],
