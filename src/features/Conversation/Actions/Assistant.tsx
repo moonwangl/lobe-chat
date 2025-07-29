@@ -5,7 +5,12 @@ import { Flexbox } from 'react-layout-kit';
 
 import { useChatStore } from '@/store/chat';
 import { threadSelectors } from '@/store/chat/selectors';
-import { copyAsHtml, downloadAsMarkdown, exportToDocx } from '@/utils/wordFunction';
+import {
+  copyAsHtml,
+  copyAsPlainText,
+  downloadAsMarkdown,
+  exportToDocx,
+} from '@/utils/wordFunction';
 
 import { useChatListActionsBar } from '../hooks/useChatListActionsBar';
 import { RenderAction } from '../types';
@@ -43,6 +48,15 @@ export const AssistantActionsBar: RenderAction = memo(
       }
     }, [content]);
 
+    // Handle copy plain text action
+    const handleCopyPlainText = useCallback(() => {
+      try {
+        copyAsPlainText(content || '');
+      } catch (error) {
+        console.error('Failed to copy plain text:', error);
+      }
+    }, [content]);
+
     // Enhanced action click handler
     const handleActionClick = useCallback(
       (action: ActionIconGroupEvent) => {
@@ -58,9 +72,19 @@ export const AssistantActionsBar: RenderAction = memo(
           handleCopyHtml();
           return;
         }
+        if (action.key === 'copyPlainText') {
+          handleCopyPlainText();
+          return;
+        }
         onActionClick?.(action);
       },
-      [handleDownloadMarkdown, handleExportDocx, handleCopyHtml, onActionClick],
+      [
+        handleDownloadMarkdown,
+        handleExportDocx,
+        handleCopyHtml,
+        handleCopyPlainText,
+        onActionClick,
+      ],
     );
     const hasThread = useChatStore((s) => threadSelectors.hasThreadBySourceMsgId(id)(s));
 
@@ -70,6 +94,7 @@ export const AssistantActionsBar: RenderAction = memo(
       delAndRegenerate,
       copy,
       copyHtml,
+      copyPlainText,
       del,
       downloadMarkdown,
       exportDocx,
@@ -98,6 +123,11 @@ export const AssistantActionsBar: RenderAction = memo(
                 icon: <Icon icon={copy.icon} />,
                 key: copy.key,
                 label: copy.label,
+              },
+              {
+                icon: <Icon icon={copyPlainText.icon} />,
+                key: copyPlainText.key,
+                label: copyPlainText.label,
               },
               {
                 icon: <Icon icon={downloadMarkdown.icon} />,

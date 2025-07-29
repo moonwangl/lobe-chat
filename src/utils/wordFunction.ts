@@ -1104,6 +1104,68 @@ ${bodyContent}
 };
 
 /**
+ * Copy content as plain text by removing markdown formatting
+ * @param content - The markdown content to convert to plain text
+ */
+export const copyAsPlainText = async (content: string): Promise<void> => {
+  try {
+    // Filter content to only include text between first and last --- markers
+    const filteredContent = extractContentBetweenMarkers(content);
+
+    // Remove markdown formatting to get plain text
+    let plainText = filteredContent
+      // Remove headers (# ## ### etc.)
+      .replaceAll(/^#{1,6}\s+/gm, '')
+      // Remove bold (**text** or __text__)
+      .replaceAll(/\*\*(.*?)\*\*/g, '$1')
+      .replaceAll(/__(.*?)__/g, '$1')
+      // Remove italic (*text* or _text_)
+      .replaceAll(/\*(.*?)\*/g, '$1')
+      .replaceAll(/_(.*?)_/g, '$1')
+      // Remove strikethrough (~~text~~)
+      .replaceAll(/~~(.*?)~~/g, '$1')
+      // Remove inline code (`text`)
+      .replaceAll(/`([^`]+)`/g, '$1')
+      // Remove code blocks (```text```)
+      .replaceAll(/```[\S\s]*?```/g, '')
+      // Remove links [text](url) - keep only text
+      .replaceAll(/\[([^\]]+)]\([^)]+\)/g, '$1')
+      // Remove images ![alt](url)
+      .replaceAll(/!\[[^\]]*]\([^)]+\)/g, '')
+      // Remove horizontal rules (--- or ***)
+      .replaceAll(/^[*_-]{3,}$/gm, '')
+      // Remove blockquotes (> text)
+      .replaceAll(/^>\s*/gm, '')
+      // Remove list markers (- * + or 1. 2. etc.)
+      .replaceAll(/^\s*[*+-]\s+/gm, '')
+      .replaceAll(/^\s*\d+\.\s+/gm, '')
+      // Remove extra whitespace and normalize line breaks
+      .replaceAll(/\n\s*\n\s*\n/g, '\n\n')
+      .trim();
+
+    // Copy to clipboard using the Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(plainText);
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = plainText;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.append(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
+    }
+  } catch (error) {
+    console.error('Error copying plain text:', error);
+    throw new Error('Failed to copy plain text to clipboard');
+  }
+};
+
+/**
  * Check if content contains markdown blocks
  * @param content - The content to check
  * @returns Boolean indicating if markdown blocks are present

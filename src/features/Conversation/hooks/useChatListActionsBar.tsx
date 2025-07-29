@@ -18,6 +18,7 @@ interface ChatListActionsBar {
   branching: ActionIconGroupItemType;
   copy: ActionIconGroupItemType;
   copyHtml: ActionIconGroupItemType;
+  copyPlainText: ActionIconGroupItemType;
   del: ActionIconGroupItemType;
   delAndRegenerate: ActionIconGroupItemType;
   divider: { type: 'divider' };
@@ -51,6 +52,11 @@ export const useChatListActionsBar = ({
         icon: Copy,
         key: 'copyHtml',
         label: t('wordFunction.copyHtml', { defaultValue: 'Copy as HTML for Word', ns: 'chat' }),
+      },
+      copyPlainText: {
+        icon: Copy,
+        key: 'copyPlainText',
+        label: t('wordFunction.copyPlainText', { defaultValue: 'Copy as Plain Text', ns: 'chat' }),
       },
       del: {
         danger: true,
