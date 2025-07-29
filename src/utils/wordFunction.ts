@@ -353,6 +353,21 @@ export const exportToDocx = async (
     const blocks = parseMarkdownContent(filteredContent);
     const docParagraphs: Paragraph[] = [];
 
+    // Extract title from first H1 heading for filename
+    let documentTitle = 'document';
+    const firstH1 = blocks.find((block) => block.type === 'header' && block.level === 1);
+    if (firstH1) {
+      // Remove markdown formatting and clean up the title
+      documentTitle = firstH1.content
+        .replaceAll(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+        .replaceAll(/\*(.*?)\*/g, '$1') // Remove italic
+        .replaceAll(/`(.*?)`/g, '$1') // Remove code
+        .replaceAll(/\[(.*?)]\(.*?\)/g, '$1') // Remove links, keep text
+        .replaceAll(/["*/:<>?\\|]/g, '') // Remove invalid filename characters
+        .trim();
+    }
+    const finalFilename = filename === 'document.docx' ? `${documentTitle}.docx` : filename;
+
     let lastListLevel = -1;
     let listCounters: { [key: number]: number } = {};
 
@@ -853,7 +868,7 @@ export const exportToDocx = async (
     const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     });
-    saveAs(blob, filename);
+    saveAs(blob, finalFilename);
   } catch (error) {
     console.error('Error exporting to DOCX:', error);
     throw new Error('Failed to export to DOCX format');
@@ -867,8 +882,27 @@ export const exportToDocx = async (
  */
 export const downloadAsMarkdown = (content: string, filename: string = 'document.md'): void => {
   try {
+    // Filter content to only include text between first and last --- markers
+    const filteredContent = extractContentBetweenMarkers(content);
+
+    // Extract title from first H1 heading for filename
+    let documentTitle = 'document';
+    const blocks = parseMarkdownContent(filteredContent);
+    const firstH1 = blocks.find((block) => block.type === 'header' && block.level === 1);
+    if (firstH1) {
+      // Remove markdown formatting and clean up the title
+      documentTitle = firstH1.content
+        .replaceAll(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+        .replaceAll(/\*(.*?)\*/g, '$1') // Remove italic
+        .replaceAll(/`(.*?)`/g, '$1') // Remove code
+        .replaceAll(/\[(.*?)]\(.*?\)/g, '$1') // Remove links, keep text
+        .replaceAll(/["*/:<>?\\|]/g, '') // Remove invalid filename characters
+        .trim();
+    }
+    const finalFilename = filename === 'document.md' ? `${documentTitle}.md` : filename;
+
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
-    saveAs(blob, filename);
+    saveAs(blob, finalFilename);
   } catch (error) {
     console.error('Error downloading markdown:', error);
     throw new Error('Failed to download markdown file');

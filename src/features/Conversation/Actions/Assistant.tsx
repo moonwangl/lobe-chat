@@ -17,22 +17,22 @@ export const AssistantActionsBar: RenderAction = memo(
     // Handle download markdown action
     const handleDownloadMarkdown = useCallback(() => {
       try {
-        const filename = id ? `message-${id}.md` : 'document.md';
-        downloadAsMarkdown(content || '', filename);
+        // Use default filename to trigger title extraction from H1 heading
+        downloadAsMarkdown(content || '', 'document.md');
       } catch (error) {
         console.error('Failed to download markdown:', error);
       }
-    }, [content, id]);
+    }, [content]);
 
     // Handle export DOCX action
     const handleExportDocx = useCallback(() => {
       try {
-        const filename = id ? `message-${id}.docx` : 'document.docx';
-        exportToDocx(content || '', filename);
+        // Use default filename to trigger title extraction from H1 heading
+        exportToDocx(content || '', 'document.docx');
       } catch (error) {
         console.error('Failed to export DOCX:', error);
       }
-    }, [content, id]);
+    }, [content]);
 
     // Handle copy HTML action
     const handleCopyHtml = useCallback(() => {
