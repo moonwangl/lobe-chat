@@ -278,6 +278,7 @@ export default {
   },
   wordFunction: {
     copyHtml: '复制到Word文档',
+    copyPlainText: '复制纯文本',
     downloadMarkdown: '下载Markdown',
     exportDocx: '导出Word文档',
   },

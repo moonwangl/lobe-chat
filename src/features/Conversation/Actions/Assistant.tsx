@@ -108,8 +108,8 @@ export const AssistantActionsBar: RenderAction = memo(
     const items = useMemo(() => {
       if (hasTools) return [delAndRegenerate, copy];
 
-      return [edit, exportDocx, copyHtml].filter(Boolean) as ActionIconGroupItemType[];
-    }, [edit, exportDocx, copyHtml, hasTools]);
+      return [edit, exportDocx, copyPlainText].filter(Boolean) as ActionIconGroupItemType[];
+    }, [edit, exportDocx, copyPlainText, hasTools]);
 
     if (error) return <ErrorActionsBar onActionClick={onActionClick} />;
 
@@ -125,9 +125,9 @@ export const AssistantActionsBar: RenderAction = memo(
                 label: copy.label,
               },
               {
-                icon: <Icon icon={copyPlainText.icon} />,
-                key: copyPlainText.key,
-                label: copyPlainText.label,
+                icon: <Icon icon={copyHtml.icon} />,
+                key: copyHtml.key,
+                label: copyHtml.label,
               },
               {
                 icon: <Icon icon={downloadMarkdown.icon} />,
