@@ -274,12 +274,12 @@ const parseInlineFormatting = (text: string): TextRun[] => {
     if (currentIndex < matchItem.start) {
       const plainText = text.slice(currentIndex, matchItem.start);
       if (plainText) {
-        runs.push(new TextRun({ size: 22, text: plainText }));
+        runs.push(new TextRun({ text: plainText }));
       }
     }
 
     // Add formatted text
-    const runOptions: any = { size: 22, text: matchItem.text };
+    const runOptions: any = { text: matchItem.text };
 
     switch (matchItem.format) {
       case 'bold': {
@@ -292,7 +292,7 @@ const parseInlineFormatting = (text: string): TextRun[] => {
       }
       case 'code': {
         runOptions.font = 'Courier New';
-        runOptions.size = 20;
+        // Let the paragraph style handle the size
         break;
       }
     }
@@ -305,13 +305,13 @@ const parseInlineFormatting = (text: string): TextRun[] => {
   if (currentIndex < text.length) {
     const remainingText = text.slice(currentIndex);
     if (remainingText) {
-      runs.push(new TextRun({ size: 22, text: remainingText }));
+      runs.push(new TextRun({ text: remainingText }));
     }
   }
 
   // If no formatting was found, return the original text
   if (runs.length === 0) {
-    runs.push(new TextRun({ size: 22, text }));
+    runs.push(new TextRun({ text }));
   }
 
   return runs;
@@ -359,26 +359,30 @@ export const exportToDocx = async (
     for (const block of blocks) {
       switch (block.type) {
         case 'header': {
-          // Add proper Word heading with inline formatting for GB/T 9704—2012
+          // Add proper Word heading with inline formatting
           const headerRuns = parseInlineFormatting(block.content);
 
           // Use appropriate heading styles based on level
           let headingStyle = 'BodyText';
           switch (block.level) {
             case 1: {
-              headingStyle = 'Heading1'; // 黑体字
+              headingStyle = 'Title'; // 方正小标宋简体, 22pt, center
               break;
             }
             case 2: {
-              headingStyle = 'Heading2'; // 楷体字
+              headingStyle = 'Heading1'; // SimHei, 16pt, justified
               break;
             }
             case 3: {
-              headingStyle = 'Heading3'; // 仿宋体字
+              headingStyle = 'Heading2'; // KaiTi, 16pt, justified
               break;
             }
             case 4: {
-              headingStyle = 'Heading4'; // 仿宋体字
+              headingStyle = 'Heading3'; // FangSong, 16pt, justified
+              break;
+            }
+            case 5: {
+              headingStyle = 'Heading4'; // FangSong, 16pt, justified
               break;
             }
             default: {
@@ -544,15 +548,21 @@ export const exportToDocx = async (
         }
 
         default: {
-          // Add regular paragraph with inline formatting using GB/T 9704—2012 body text style
+          // Add regular paragraph with inline formatting
           const textLines = block.content.split('\n');
           for (const line of textLines) {
             if (line.trim()) {
+              // Detect if text contains Chinese characters
+              const hasChinese = /[\u4E00-\u9FFF]/.test(line);
               const textRuns = parseInlineFormatting(line);
+
+              // Apply different styles based on language
+              const bodyStyle = hasChinese ? 'BodyTextChinese' : 'BodyTextEnglish';
+
               docParagraphs.push(
                 new Paragraph({
                   children: textRuns,
-                  style: 'BodyText', // 四号字，两端对齐，28pt行距
+                  style: bodyStyle,
                 }),
               );
             }
@@ -642,11 +652,11 @@ export const exportToDocx = async (
               spacing: {
                 line: 560, // 28pt fixed line height (28 * 20)
                 lineRule: 'exact',
-              }, // 两端对齐
+              },
             },
             run: {
-              font: 'FangSong', // 仿宋体
-              size: 32, // 3号字 (16pt)
+              font: 'FangSong',
+              size: 32, // 16pt
             },
           },
         },
@@ -660,9 +670,7 @@ export const exportToDocx = async (
               spacing: {
                 after: 0,
                 before: 0,
-
                 line: 560,
-                // 28pt fixed line height
                 lineRule: 'exact',
               },
             },
@@ -677,52 +685,65 @@ export const exportToDocx = async (
             id: 'Title',
             name: 'Title',
             paragraph: {
-              alignment: AlignmentType.CENTER,
+              alignment: AlignmentType.CENTER, // center alignment
               spacing: {
                 after: 280,
-                // 14pt after
                 before: 280,
-
                 line: 560,
-                // 28pt fixed line height
-                lineRule: 'exact', // 14pt before
-              }, // 居中对齐
+                lineRule: 'exact',
+              },
             },
             run: {
-              // 小三号字 (15pt)
-              bold: true,
-
-              font: 'SimSun',
-              size: 30,
+              font: '方正小标宋简体', // 方正小标宋简体
+              size: 44, // 22pt
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'BodyTextChinese',
+            name: 'BodyTextChinese',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'FangSong', // 仿宋体 for Chinese
+              size: 32, // 16pt
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'BodyTextEnglish',
+            name: 'BodyTextEnglish',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'Times New Roman', // Times New Roman for English
+              size: 32, // 16pt
             },
           },
           {
             basedOn: 'Normal',
             id: 'BodyText',
             name: 'BodyText',
-            paragraph: {
-              alignment: AlignmentType.JUSTIFIED,
-              indent: {
-                firstLine: 567, // 2字符缩进 (2 * 283.5 DXA)
-              },
-              spacing: {
-                after: 0,
-                before: 0,
-
-                line: 560,
-                // 28pt fixed line height
-                lineRule: 'exact',
-              }, // 两端对齐
-            },
-            run: {
-              font: 'FangSong', // 仿宋体
-              size: 32, // 3号字 (16pt)
-            },
-          },
-          {
-            basedOn: 'Normal',
-            id: 'Heading1',
-            name: 'Heading1',
             paragraph: {
               alignment: AlignmentType.JUSTIFIED,
               indent: {
@@ -736,12 +757,29 @@ export const exportToDocx = async (
               },
             },
             run: {
-              // 3号字
-bold: true, 
-              
-font: 'SimHei', 
-              // 黑体
-size: 32,
+              font: 'FangSong',
+              size: 32, // 16pt
+            },
+          },
+          {
+            basedOn: 'Normal',
+            id: 'Heading1',
+            name: 'Heading1',
+            paragraph: {
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
+              indent: {
+                firstLine: 567, // 2字符缩进
+              },
+              spacing: {
+                after: 0,
+                before: 0,
+                line: 560,
+                lineRule: 'exact',
+              },
+            },
+            run: {
+              font: 'SimHei', // 黑体
+              size: 32, // 16pt
             },
           },
           {
@@ -749,7 +787,7 @@ size: 32,
             id: 'Heading2',
             name: 'Heading2',
             paragraph: {
-              alignment: AlignmentType.JUSTIFIED,
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
               indent: {
                 firstLine: 567, // 2字符缩进
               },
@@ -762,7 +800,7 @@ size: 32,
             },
             run: {
               font: 'KaiTi', // 楷体
-              size: 32, // 3号字
+              size: 32, // 16pt
             },
           },
           {
@@ -770,7 +808,7 @@ size: 32,
             id: 'Heading3',
             name: 'Heading3',
             paragraph: {
-              alignment: AlignmentType.JUSTIFIED,
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
               indent: {
                 firstLine: 567, // 2字符缩进
               },
@@ -783,7 +821,7 @@ size: 32,
             },
             run: {
               font: 'FangSong', // 仿宋体
-              size: 32, // 3号字
+              size: 32, // 16pt
             },
           },
           {
@@ -791,7 +829,7 @@ size: 32,
             id: 'Heading4',
             name: 'Heading4',
             paragraph: {
-              alignment: AlignmentType.JUSTIFIED,
+              alignment: AlignmentType.JUSTIFIED, // justified alignment
               indent: {
                 firstLine: 567, // 2字符缩进
               },
@@ -804,15 +842,18 @@ size: 32,
             },
             run: {
               font: 'FangSong', // 仿宋体
-              size: 32, // 3号字
+              size: 32, // 16pt
             },
           },
         ],
       },
     });
 
-    const buffer = await Packer.toBlob(doc);
-    saveAs(buffer, filename);
+    const buffer = await Packer.toBuffer(doc);
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    });
+    saveAs(blob, filename);
   } catch (error) {
     console.error('Error exporting to DOCX:', error);
     throw new Error('Failed to export to DOCX format');
