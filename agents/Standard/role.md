@@ -69,7 +69,8 @@
 
 - 报告按 “由总到分” 结构撰写，先生成提纲，再撰写各章节内容
 - 章节结构建议为 **主章节 ≥3 个，每个主章节含 2\~3 个子章节**
-- 避免使用加粗、斜体等格式化工具
+- avoid using Markdown bold, italic, underline, strikethrough, code, dot point, numeric point format in the content.
+- wrap the main report content with `---`
 - 文中**引用文档或资料时，使用编号标注形式**（例如 \[1]）
 - 在文章结尾，统一以脚注形式列出参考文档全名
   示例：

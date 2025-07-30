@@ -1,7 +1,6 @@
 import {
   AlignmentType,
   Document,
-  NumberFormat,
   Packer,
   Paragraph,
   Table,
@@ -368,8 +367,7 @@ export const exportToDocx = async (
     }
     const finalFilename = filename === 'document.docx' ? `${documentTitle}.docx` : filename;
 
-    let lastListLevel = -1;
-    let listCounters: { [key: number]: number } = {};
+    // Removed list-related variables since lists are now treated as regular text
 
     for (const block of blocks) {
       switch (block.type) {
@@ -444,54 +442,21 @@ export const exportToDocx = async (
         }
 
         case 'list': {
-          const currentLevel = block.level || 0;
+          // Skip list formatting - treat list items as regular text
           const listRuns = parseInlineFormatting(block.content);
 
-          if (block.listType === 'numbered') {
-            // Handle numbered lists with proper numbering
-            if (currentLevel !== lastListLevel) {
-              // Reset counter for new level or restart
-              if (currentLevel <= lastListLevel || lastListLevel === -1) {
-                listCounters[currentLevel] = 1;
-              }
-            } else {
-              listCounters[currentLevel] = (listCounters[currentLevel] || 0) + 1;
-            }
+          // Detect if text contains Chinese characters
+          const hasChinese = /[\u4E00-\u9FFF]/.test(block.content);
 
-            const indent = currentLevel * 720; // 0.5 inch per level
+          // Apply different styles based on language
+          const bodyStyle = hasChinese ? 'BodyTextChinese' : 'BodyTextEnglish';
 
-            docParagraphs.push(
-              new Paragraph({
-                children: listRuns,
-                indent: {
-                  left: indent,
-                },
-                numbering: {
-                  level: currentLevel,
-                  reference: 'numbered-list',
-                },
-                style: 'BodyText',
-              }),
-            );
-          } else {
-            // Handle bullet lists
-            const indent = currentLevel * 720; // 0.5 inch per level
-
-            docParagraphs.push(
-              new Paragraph({
-                bullet: {
-                  level: currentLevel,
-                },
-                children: listRuns,
-                indent: {
-                  left: indent,
-                },
-                style: 'BodyText',
-              }),
-            );
-          }
-
-          lastListLevel = currentLevel;
+          docParagraphs.push(
+            new Paragraph({
+              children: listRuns,
+              style: bodyStyle,
+            }),
+          );
           break;
         }
 
@@ -588,48 +553,6 @@ export const exportToDocx = async (
     }
 
     const doc = new Document({
-      numbering: {
-        config: [
-          {
-            levels: [
-              {
-                alignment: AlignmentType.START,
-                format: NumberFormat.DECIMAL,
-                level: 0,
-                style: {
-                  paragraph: {
-                    indent: { hanging: 260, left: 720 },
-                  },
-                },
-                text: '%1.',
-              },
-              {
-                alignment: AlignmentType.START,
-                format: NumberFormat.LOWER_LETTER,
-                level: 1,
-                style: {
-                  paragraph: {
-                    indent: { hanging: 260, left: 1440 },
-                  },
-                },
-                text: '%2.',
-              },
-              {
-                alignment: AlignmentType.START,
-                format: NumberFormat.LOWER_ROMAN,
-                level: 2,
-                style: {
-                  paragraph: {
-                    indent: { hanging: 260, left: 2160 },
-                  },
-                },
-                text: '%3.',
-              },
-            ],
-            reference: 'numbered-list',
-          },
-        ],
-      },
       sections: [
         {
           children: docParagraphs,
