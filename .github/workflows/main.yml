@@ -1,0 +1,26 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches:
+      - release-aliyun-ecs
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.ECS_HOST }}
+          username: ${{ secrets.ECS_USER }}
+          key: ${{ secrets.ECS_SSH_KEY }}
+          script: |
+            cd /opt/lobe-chat
+            git pull origin main
+            cd /docker-compose/custom/logto
+            docker compose -f docker-compose.aliyun.yml pull
+            docker compose -f docker-compose.aliyun.yml up -d --build
