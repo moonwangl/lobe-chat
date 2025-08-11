@@ -1,20 +1,13 @@
 name: lobe-chat-database
 services:
-  network-service:
-    image: alpine
-    container_name: lobe-network
-    ports:
-      - '${LOGTO_PORT}:${LOGTO_PORT}' # Logto
-      - '3002:3002' # Logto Admin
-      - '${LOBE_PORT}:3210' # LobeChat
-    command: tail -f /dev/null
-    networks:
-      - lobe-network
-
   logto:
     image: svhd/logto
     container_name: lobe-logto
-    network_mode: 'service:network-service'
+    ports:
+      - '${LOGTO_PORT}:${LOGTO_PORT}' # Logto
+      - '3002:3002' # Logto Admin
+    networks:
+      - lobe-network
     environment:
       - 'TRUST_PROXY_HEADER=1'
       - 'PORT=${LOGTO_PORT}'
@@ -28,40 +21,47 @@ services:
       context: ../../../
       dockerfile: Dockerfile.database
     container_name: lobe-chat
-    network_mode: 'service:network-service'
+    ports:
+      - '${LOBE_PORT}:3210' # LobeChat
+    networks:
+      - lobe-network
     depends_on:
-      network-service:
-        condition: service_started
       logto:
         condition: service_started
 
     environment:
-      - 'APP_URL=http://localhost:3210'
-      - 'NEXT_AUTH_SSO_PROVIDERS=logto'
-      - 'KEY_VAULTS_SECRET=Kix2wcUONd4CX51E/ZPAd36BqM4wzJgKjPtz2sGztqQ='
-      - 'NEXT_AUTH_SECRET=2a60e2370557f86f6e4b27013a30f380'
-      - 'NEXTAUTH_URL=http://localhost:${LOBE_PORT}/api/auth'
+      - 'APP_URL=${APP_URL}'
+      - 'NEXT_AUTH_SSO_PROVIDERS=${NEXT_AUTH_SSO_PROVIDERS}'
+      - 'KEY_VAULTS_SECRET=${KEY_VAULTS_SECRET}'
+      - 'NEXT_AUTH_SECRET=${NEXT_AUTH_SECRET}'
+      - 'NEXTAUTH_URL=${NEXTAUTH_URL}'
       - 'DATABASE_URL=${DATABASE_URL}${LOBE_DB_NAME}'
-      - 'S3_ENDPOINT=http://localhost:${MINIO_PORT}'
-      - 'S3_BUCKET=${MINIO_LOBE_BUCKET}'
-      - 'S3_PUBLIC_DOMAIN=http://localhost:${MINIO_PORT}'
-      - 'S3_ENABLE_PATH_STYLE=1'
-      - 'S3_ACCESS_KEY_ID=${MINIO_ROOT_USER}'
-      - 'S3_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}'
+      - 'S3_ENDPOINT=${S3_ENDPOINT}'
+      - 'S3_BUCKET=${S3_BUCKET}'
+      - 'S3_PUBLIC_DOMAIN=${S3_PUBLIC_DOMAIN}'
+      - 'S3_ENABLE_PATH_STYLE=${S3_ENABLE_PATH_STYLE}'
+      - 'S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}'
+      - 'S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}'
+      - 'S3_REGION=${S3_REGION}'
+      - 'S3_SET_ACL=${S3_SET_ACL}'
       - 'NEXT_PUBLIC_SERVICE_MODE=server'
-      - 'NEXT_PUBLIC_ENABLE_AUTH=true'
-      - 'NEXT_PUBLIC_REQUIRE_LOGIN=true'
-      - 'AUTH_LOGTO_ID=${AUTH_LOGTO_ID}'  # Add this line
-      - 'AUTH_LOGTO_SECRET=${AUTH_LOGTO_SECRET}'  # Add this line
-      - 'AUTH_LOGTO_ISSUER=http://localhost:${LOGTO_PORT}/oidc'
-      - 'UVX_PLUGIN_SERVER=http://word-mcp:3000'
+      - 'NEXT_PUBLIC_ENABLE_AUTH=${NEXT_PUBLIC_ENABLE_AUTH}'
+      - 'NEXT_PUBLIC_REQUIRE_LOGIN=${NEXT_PUBLIC_REQUIRE_LOGIN}'
+      - 'NEXT_PUBLIC_BRANDING_NAME=${NEXT_PUBLIC_BRANDING_NAME}'
+      - 'NEXT_PUBLIC_BRANDING_LOGO_URL=${NEXT_PUBLIC_BRANDING_LOGO_URL}'
+      - 'NEXT_PUBLIC_ORG_NAME=${NEXT_PUBLIC_ORG_NAME}'
+      - 'NEXT_PUBLIC_OFFICIAL_URL=${NEXT_PUBLIC_OFFICIAL_URL}'
+      - 'NEXT_PUBLIC_OFFICIAL_PREVIEW_URL=${NEXT_PUBLIC_OFFICIAL_PREVIEW_URL}'
+      - 'NEXT_PUBLIC_OFFICIAL_SITE=${NEXT_PUBLIC_OFFICIAL_SITE}'
+      - 'AUTH_LOGTO_ID=${AUTH_LOGTO_ID}'
+      - 'AUTH_LOGTO_SECRET=${AUTH_LOGTO_SECRET}'
+      - 'AUTH_LOGTO_ISSUER=${AUTH_LOGTO_ISSUER}'
+      - 'FEATURE_FLAGS=${FEATURE_FLAGS}'
+      - 'DEFAULT_FILES_CONFIG=${DEFAULT_FILES_CONFIG}'
+      - 'SEARXNG_URL=${SEARXNG_URL}'
     env_file:
       - .env
     restart: always
-
-volumes:
-  data:
-    driver: local
 
 networks:
   lobe-network:
