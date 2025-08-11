@@ -24,4 +24,5 @@ jobs:
             git checkout release-aliyun-ecs
             cd /opt/lobe-chat/docker-compose/custom/logto
             sudo docker compose -f docker-compose.aliyun.yml pull
-            sudo docker compose -f docker-compose.aliyun.yml up -d --build --build-arg USE_CN_MIRROR=true
+            sudo docker compose -f docker-compose.aliyun.yml build --build-arg USE_CN_MIRROR=true
+            sudo docker compose -f docker-compose.aliyun.yml up -d
