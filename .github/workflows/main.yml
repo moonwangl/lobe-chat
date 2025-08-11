@@ -21,6 +21,6 @@ jobs:
           script: |
             cd /opt/lobe-chat
             git pull origin main
-            cd /docker-compose/custom/logto
+            cd /opt/lobe-chat/docker-compose/custom/logto
             docker compose -f docker-compose.aliyun.yml pull
             docker compose -f docker-compose.aliyun.yml up -d --build
