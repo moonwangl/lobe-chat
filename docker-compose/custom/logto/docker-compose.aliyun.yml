@@ -15,13 +15,10 @@ services:
     image: svhd/logto
     container_name: lobe-logto
     network_mode: 'service:network-service'
-    depends_on:
-      postgresql:
-        condition: service_healthy
     environment:
       - 'TRUST_PROXY_HEADER=1'
       - 'PORT=${LOGTO_PORT}'
-      - 'DB_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgresql:5432/logto'
+      - 'DB_URL=${DATABASE_URL}logto'
       - 'ENDPOINT=http://localhost:${LOGTO_PORT}'
       - 'ADMIN_ENDPOINT=http://localhost:3002'
     entrypoint: ['sh', '-c', 'npm run cli db seed -- --swe && npm start']
@@ -33,11 +30,7 @@ services:
     container_name: lobe-chat
     network_mode: 'service:network-service'
     depends_on:
-      postgresql:
-        condition: service_healthy
       network-service:
-        condition: service_started
-      minio:
         condition: service_started
       logto:
         condition: service_started
@@ -48,7 +41,7 @@ services:
       - 'KEY_VAULTS_SECRET=Kix2wcUONd4CX51E/ZPAd36BqM4wzJgKjPtz2sGztqQ='
       - 'NEXT_AUTH_SECRET=2a60e2370557f86f6e4b27013a30f380'
       - 'NEXTAUTH_URL=http://localhost:${LOBE_PORT}/api/auth'
-      - 'DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgresql:5432/${LOBE_DB_NAME}'
+      - 'DATABASE_URL=${DATABASE_URL}${LOBE_DB_NAME}'
       - 'S3_ENDPOINT=http://localhost:${MINIO_PORT}'
       - 'S3_BUCKET=${MINIO_LOBE_BUCKET}'
       - 'S3_PUBLIC_DOMAIN=http://localhost:${MINIO_PORT}'
