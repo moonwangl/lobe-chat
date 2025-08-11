@@ -23,5 +23,5 @@ jobs:
             git pull
             git checkout release-aliyun-ecs
             cd /opt/lobe-chat/docker-compose/custom/logto
-            docker compose -f docker-compose.aliyun.yml pull
-            docker compose -f docker-compose.aliyun.yml up -d --build
+            sudo docker compose -f docker-compose.aliyun.yml pull
+            sudo docker compose -f docker-compose.aliyun.yml up -d --build
