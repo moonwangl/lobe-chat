@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.ECS_SSH_KEY }}
           script: |
             cd /opt/lobe-chat
-            git pull origin main
+            git pull
             git checkout release-aliyun-ecs
             cd /opt/lobe-chat/docker-compose/custom/logto
             docker compose -f docker-compose.aliyun.yml pull
