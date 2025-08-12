@@ -123,10 +123,15 @@ COPY . .
 
 # run build standalone for docker version
 # Disable Next.js telemetry and optimize build
+# Skip sitemap generation to reduce build time
 RUN NEXT_TELEMETRY_DISABLED=1 \
     GENERATE_SOURCEMAP=false \
-    NODE_OPTIONS="--max-old-space-size=4096" \
-    npm run build:docker
+    ANALYZE=false \
+    NEXT_PUBLIC_SENTRY_DSN="" \
+    SENTRY_UPLOAD_SOURCE_MAPS=false \
+    WEBPACK_DISABLE_CACHE=true \
+    NODE_OPTIONS="--max-old-space-size=3072 --no-warnings --optimize-for-size --max-semi-space-size=128" \
+    timeout 1800 sh -c "npm run prebuild && DOCKER=true next build" || (echo "Build timed out after 30 minutes" && exit 1)
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app
