@@ -88,7 +88,7 @@ ENV NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}" \
     NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
 
 # Node
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 WORKDIR /app
 
@@ -122,7 +122,7 @@ RUN \
 COPY . .
 
 # run build standalone for docker version
-RUN npm run build:docker
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build:docker
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app
@@ -160,7 +160,7 @@ FROM scratch
 COPY --from=app / /
 
 ENV NODE_ENV="production" \
-    NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca" \
+    NODE_OPTIONS="--max-old-space-size=2048 --dns-result-order=ipv4first --use-openssl-ca" \
     NODE_EXTRA_CA_CERTS="" \
     NODE_TLS_REJECT_UNAUTHORIZED="" \
     SSL_CERT_DIR="/etc/ssl/certs/ca-certificates.crt"
