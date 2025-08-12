@@ -122,7 +122,11 @@ RUN \
 COPY . .
 
 # run build standalone for docker version
-RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build:docker
+# Disable Next.js telemetry and optimize build
+RUN NEXT_TELEMETRY_DISABLED=1 \
+    GENERATE_SOURCEMAP=false \
+    NODE_OPTIONS="--max-old-space-size=4096" \
+    npm run build:docker
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app
@@ -163,7 +167,8 @@ ENV NODE_ENV="production" \
     NODE_OPTIONS="--max-old-space-size=2048 --dns-result-order=ipv4first --use-openssl-ca" \
     NODE_EXTRA_CA_CERTS="" \
     NODE_TLS_REJECT_UNAUTHORIZED="" \
-    SSL_CERT_DIR="/etc/ssl/certs/ca-certificates.crt"
+    SSL_CERT_DIR="/etc/ssl/certs/ca-certificates.crt" \
+    NEXT_TELEMETRY_DISABLED="1"
 
 # Make the middleware rewrite through local as default
 # refs: https://github.com/lobehub/lobe-chat/issues/5876
