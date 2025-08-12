@@ -20,6 +20,8 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.database
+      args:
+        USE_CN_MIRROR: "true"
     container_name: lobe-chat
     ports:
       - '${LOBE_PORT}:3210' # LobeChat
