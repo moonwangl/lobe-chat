@@ -3,17 +3,18 @@ services:
   logto:
     image: svhd/logto
     container_name: lobe-logto
-    ports:
-      - '${LOGTO_PORT}:${LOGTO_PORT}' # Logto
-      - '3002:3002' # Logto Admin
+    expose:
+      - '${LOGTO_PORT}' # Logto
+      - '3002' # Logto Admin
     networks:
       - lobe-network
+      - npm_proxy
     environment:
       - 'TRUST_PROXY_HEADER=1'
       - 'PORT=${LOGTO_PORT}'
       - 'DB_URL=${DATABASE_URL}logto'
-      - 'ENDPOINT=http://localhost:${LOGTO_PORT}'
-      - 'ADMIN_ENDPOINT=http://localhost:3002'
+      - 'ENDPOINT=http://lobe-logto:${LOGTO_PORT}'
+      - 'ADMIN_ENDPOINT=http://lobe-logto:3002'
     entrypoint: ['sh', '-c', 'npm run cli db seed -- --swe && npm start']
 
   lobe:
@@ -23,10 +24,11 @@ services:
       args:
         USE_CN_MIRROR: "true"
     container_name: lobe-chat
-    ports:
-      - '${LOBE_PORT}:3210' # LobeChat
+    expose:
+      - '3210' # LobeChat
     networks:
       - lobe-network
+      - npm_proxy
     depends_on:
       logto:
         condition: service_started
@@ -68,3 +70,5 @@ services:
 networks:
   lobe-network:
     driver: bridge
+  npm_proxy:
+    external: true
