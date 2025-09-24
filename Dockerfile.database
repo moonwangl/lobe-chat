@@ -153,7 +153,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
     NEXT_WEBPACK_WORKERS=1 \
     NODE_ENV=production \
     DOCKER=true \
-    timeout 14400 sh -c "npm run prebuild && npm install -g next && next build --no-lint --no-mangling" || (echo "Build timed out after 240 minutes" && exit 1)
+    timeout 28800 sh -c "npm run prebuild && npm install -g next && next build --no-lint --no-mangling" || (echo "Build timed out after 480 seconds" && exit 1)
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app

@@ -14,8 +14,10 @@ import { POST as UniverseRoute } from '../[provider]/route';
 //   setGlobalDispatcher(new ProxyAgent({ uri: process.env.HTTP_PROXY_URL }));
 // }
 
-export const POST = checkAuth(async (req: Request, { jwtPayload }) =>
-  UniverseRoute(req, {
+export const runtime = 'edge';
+
+export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
+  return UniverseRoute(req, {
     createRuntime: () => {
       const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
 
@@ -31,5 +33,5 @@ export const POST = checkAuth(async (req: Request, { jwtPayload }) =>
       return new AgentRuntime(instance);
     },
     params: Promise.resolve({ provider: ModelProvider.VertexAI }),
-  }),
-);
+  });
+});
