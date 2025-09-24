@@ -120,26 +120,33 @@ RUN \
     # Enable corepack
     && corepack enable \
     # Use pnpm for corepack
-    && corepack use $(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json) \
-    # Install the dependencies (在中国构建时使用pnpm但配置镜像)
-    && pnpm i \
-    # Add db migration dependencies
-    && mkdir -p /deps \
+    && corepack use $(sed -n 's/.*"packageManager": "\(.*\)".*/\1/p' package.json)
+
+COPY . .
+
+# 使用BuildKit缓存挂载安装依赖
+RUN --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/root/.pnpm-store \
+    pnpm i
+
+# 添加db迁移依赖
+RUN --mount=type=cache,target=/root/.npm \
+    --mount=type=cache,target=/root/.pnpm-store \
+    mkdir -p /deps \
     && cd /deps \
     && pnpm init \
     && pnpm add pg drizzle-orm
 
-COPY . .
-
 # run build standalone for docker version
 # Disable Next.js telemetry and optimize build
 # Skip sitemap generation to reduce build time
-RUN NEXT_TELEMETRY_DISABLED=1 \
+RUN --mount=type=cache,target=/app/.next/cache \
+    NEXT_TELEMETRY_DISABLED=1 \
     GENERATE_SOURCEMAP=false \
     ANALYZE=false \
     NEXT_PUBLIC_SENTRY_DSN="" \
     SENTRY_UPLOAD_SOURCE_MAPS=false \
-    WEBPACK_DISABLE_CACHE=true \
+    WEBPACK_DISABLE_CACHE=false \
     NODE_OPTIONS="--max-old-space-size=4096 --no-warnings" \
     NEXT_MEMORY_LIMIT=4096 \
     NODE_ENV=production \
