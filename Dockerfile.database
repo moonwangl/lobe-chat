@@ -130,9 +130,11 @@ RUN NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_SENTRY_DSN="" \
     SENTRY_UPLOAD_SOURCE_MAPS=false \
     WEBPACK_DISABLE_CACHE=true \
-    NODE_OPTIONS="--max-old-space-size=2048 --no-warnings" \
-    NEXT_MEMORY_LIMIT=2048 \
-    timeout 3600 sh -c "npm run prebuild && npm install -g next && NODE_ENV=production DOCKER=true next build" || (echo "Build timed out after 60 minutes" && exit 1)
+    NODE_OPTIONS="--max-old-space-size=4096 --no-warnings" \
+    NEXT_MEMORY_LIMIT=4096 \
+    NODE_ENV=production \
+    DOCKER=true \
+    timeout 7200 sh -c "npm run prebuild && npm install -g next && next build" || (echo "Build timed out after 120 minutes" && exit 1)
 
 ## Application image, copy all the files for production
 FROM busybox:latest AS app
