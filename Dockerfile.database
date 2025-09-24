@@ -147,7 +147,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
     NEXT_PUBLIC_SENTRY_DSN="" \
     SENTRY_UPLOAD_SOURCE_MAPS=false \
     WEBPACK_DISABLE_CACHE=false \
-    NODE_OPTIONS="--max-old-space-size=8192 --no-warnings --max-semi-space-size=512 --optimize-for-size --gc-interval=100" \
+    NODE_OPTIONS="--max-old-space-size=8192 --no-warnings" \
     NEXT_MEMORY_LIMIT=8192 \
     NEXT_WEBPACK_MEMORY_LIMIT=8192 \
     NEXT_WEBPACK_WORKERS=1 \
