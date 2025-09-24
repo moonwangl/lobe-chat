@@ -88,7 +88,7 @@ ENV NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}" \
     NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
 
 # Node
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 WORKDIR /app
 
@@ -130,8 +130,8 @@ RUN NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_SENTRY_DSN="" \
     SENTRY_UPLOAD_SOURCE_MAPS=false \
     WEBPACK_DISABLE_CACHE=true \
-    NODE_OPTIONS="--max-old-space-size=4096 --no-warnings" \
-    NEXT_MEMORY_LIMIT=4096 \
+    NODE_OPTIONS="--max-old-space-size=8192 --no-warnings" \
+    NEXT_MEMORY_LIMIT=8192 \
     NODE_ENV=production \
     DOCKER=true \
     timeout 7200 sh -c "npm run prebuild && npm install -g next && next build" || (echo "Build timed out after 120 minutes" && exit 1)
