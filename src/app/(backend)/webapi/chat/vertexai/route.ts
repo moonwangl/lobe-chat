@@ -14,22 +14,24 @@ import { POST as UniverseRoute } from '../[provider]/route';
 //   setGlobalDispatcher(new ProxyAgent({ uri: process.env.HTTP_PROXY_URL }));
 // }
 
-export const POST = checkAuth(async (req: Request, { jwtPayload }) =>
-  UniverseRoute(req, {
-    createRuntime: () => {
-      const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
+export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
+  const createRuntime = () => {
+    const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
 
-      const credentials = safeParseJSON(googleAuthStr);
-      const googleAuthOptions = credentials ? { credentials } : undefined;
+    const credentials = safeParseJSON(googleAuthStr);
+    const googleAuthOptions = credentials ? { credentials } : undefined;
 
-      const instance = LobeVertexAI.initFromVertexAI({
-        googleAuthOptions,
-        location: process.env.VERTEXAI_LOCATION,
-        project: !!credentials?.project_id ? credentials?.project_id : process.env.VERTEXAI_PROJECT,
-      });
+    const instance = LobeVertexAI.initFromVertexAI({
+      googleAuthOptions,
+      location: process.env.VERTEXAI_LOCATION,
+      project: !!credentials?.project_id ? credentials?.project_id : process.env.VERTEXAI_PROJECT,
+    });
 
-      return new AgentRuntime(instance);
-    },
+    return new AgentRuntime(instance);
+  };
+
+  return UniverseRoute(req, {
+    createRuntime,
     params: Promise.resolve({ provider: ModelProvider.VertexAI }),
-  }),
-);
+  });
+});
