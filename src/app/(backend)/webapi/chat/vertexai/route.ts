@@ -30,6 +30,6 @@ export const POST = checkAuth(async (req: Request, { jwtPayload }) =>
 
       return new AgentRuntime(instance);
     },
-    params: Promise.resolve({ provider: ModelProvider.VertexAI }),
+    params: { provider: ModelProvider.VertexAI } as unknown as Promise<{ provider: string }>,
   }),
 );
