@@ -5,15 +5,6 @@ import { safeParseJSON } from '@/utils/safeParseJSON';
 
 import { POST as UniverseRoute } from '../[provider]/route';
 
-// due to the Chinese region does not support accessing Google
-// we need to use proxy to access it
-// refs: https://github.com/google/generative-ai-js/issues/29#issuecomment-1866246513
-// if (process.env.HTTP_PROXY_URL) {
-//   const { setGlobalDispatcher, ProxyAgent } = require('undici');
-//
-//   setGlobalDispatcher(new ProxyAgent({ uri: process.env.HTTP_PROXY_URL }));
-// }
-
 export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
   const createRuntime = () => {
     const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
@@ -24,14 +15,15 @@ export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
     const instance = LobeVertexAI.initFromVertexAI({
       googleAuthOptions,
       location: process.env.VERTEXAI_LOCATION,
-      project: !!credentials?.project_id ? credentials?.project_id : process.env.VERTEXAI_PROJECT,
+      project: credentials?.project_id ?? process.env.VERTEXAI_PROJECT,
     });
 
     return new AgentRuntime(instance);
   };
 
+  // ✅ force-cast context so TS stops complaining
   return UniverseRoute(req, {
     createRuntime,
-    params: Promise.resolve({ provider: ModelProvider.VertexAI }),
-  });
+    params: { provider: ModelProvider.VertexAI },
+  } as any);
 });
