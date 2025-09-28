@@ -32,6 +32,6 @@ export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
 
   return UniverseRoute(req, {
     createRuntime,
-    params: Promise.resolve({ provider: ModelProvider.VertexAI }),
+    params: Promise.resolve({ provider: ModelProvider.VertexAI }) as Promise<{ provider: string }>,
   });
 });
