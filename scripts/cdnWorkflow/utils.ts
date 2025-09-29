@@ -4,6 +4,9 @@ import { resolve } from 'node:path';
 
 import { opimized, opimizedGif } from './optimized';
 
+// Add BlobPart type for file handling
+type BlobPart = string | Blob | ArrayBuffer | ArrayBufferView;
+
 export const fixWinPath = (path: string) => path.replaceAll('\\', '/');
 
 export const root = resolve(__dirname, '../..');
@@ -81,7 +84,17 @@ export const fetchImageAsFile = async (url: string, width: number) => {
     const filename = Date.now().toString() + type;
 
     // Step 3: Create a file from the blob
-    const file: File = new File([buffer], filename, {
+    // Handle different buffer types safely
+    let blobData: BlobPart;
+    if (buffer instanceof Buffer) {
+      blobData = new Uint8Array(buffer);
+    } else if (buffer instanceof SharedArrayBuffer) {
+      blobData = new Uint8Array(buffer);
+    } else {
+      blobData = new Uint8Array(buffer);
+    }
+
+    const file: File = new File([blobData], filename, {
       lastModified: Date.now(),
       type: type === '.webp' ? 'image/webp' : blob.type,
     });
