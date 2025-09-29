@@ -5,7 +5,19 @@ import { resolve } from 'node:path';
 import { opimized, opimizedGif } from './optimized';
 
 // Add BlobPart type for file handling
-type BlobPart = string | Blob | ArrayBuffer | ArrayBufferView;
+type BlobPart =
+  | string
+  | Blob
+  | ArrayBuffer
+  | Uint8Array
+  | Int8Array
+  | Uint16Array
+  | Int16Array
+  | Uint32Array
+  | Int32Array
+  | Float32Array
+  | Float64Array
+  | DataView;
 
 export const fixWinPath = (path: string) => path.replaceAll('\\', '/');
 
