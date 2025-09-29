@@ -5,7 +5,7 @@ import { safeParseJSON } from '@/utils/safeParseJSON';
 
 import { POST as UniverseRoute } from '../[provider]/route';
 
-export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
+export const POST: any = checkAuth(async (req: Request, { jwtPayload }) => {
   const createRuntime = () => {
     const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
 
@@ -21,7 +21,6 @@ export const POST = checkAuth(async (req: Request, { jwtPayload }) => {
     return new AgentRuntime(instance);
   };
 
-  // ✅ force-cast context so TS stops complaining
   return UniverseRoute(req, {
     createRuntime,
     params: { provider: ModelProvider.VertexAI },
