@@ -82,21 +82,37 @@ export const fetchImageAsFile = async (url: string, width: number) => {
 
     // Step 3: Create a file from the blob
     // Create a Uint8Array from any buffer type to ensure compatibility
-    let uint8Array: Uint8Array;
+    // Use specific types that are valid for BlobPart
+    let blobData: Uint8Array | ArrayBuffer;
 
     if (buffer instanceof Buffer) {
-      // Node.js Buffer to Uint8Array
-      uint8Array = new Uint8Array(buffer);
+      // Node.js Buffer to ArrayBuffer
+      const arrayBuffer = buffer.buffer.slice(
+        buffer.byteOffset,
+        buffer.byteOffset + buffer.byteLength,
+      );
+
+      if (arrayBuffer instanceof SharedArrayBuffer) {
+        blobData = new ArrayBuffer(arrayBuffer.byteLength);
+        new Uint8Array(blobData).set(new Uint8Array(arrayBuffer));
+      } else {
+        blobData = arrayBuffer;
+      }
     } else if (typeof SharedArrayBuffer !== 'undefined' && buffer instanceof SharedArrayBuffer) {
-      // SharedArrayBuffer to Uint8Array
-      uint8Array = new Uint8Array(buffer);
+      // For SharedArrayBuffer, we must create a Uint8Array and copy the data
+      // This ensures we have a type that's compatible with the File constructor
+      const tempArray = new Uint8Array(buffer);
+      // Create a new ArrayBuffer with the same content
+      const newArrayBuffer = new ArrayBuffer(tempArray.length);
+      new Uint8Array(newArrayBuffer).set(tempArray);
+      blobData = newArrayBuffer;
     } else {
-      // ArrayBuffer to Uint8Array
-      uint8Array = new Uint8Array(buffer as ArrayBuffer);
+      // Already an ArrayBuffer
+      blobData = buffer as ArrayBuffer;
     }
 
-    // Create the file using the Uint8Array directly
-    const file: File = new File([uint8Array], filename, {
+    // Create the file using BlobPart which is compatible with the File constructor
+    const file: File = new File([blobData], filename, {
       lastModified: Date.now(),
       type: type === '.webp' ? 'image/webp' : blob.type,
     });
