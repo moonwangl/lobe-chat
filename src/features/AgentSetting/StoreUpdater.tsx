@@ -4,6 +4,7 @@ import { ForwardedRef, memo, useImperativeHandle } from 'react';
 import { createStoreUpdater } from 'zustand-utils';
 
 import { DEFAULT_AGENT_META } from '@/const/meta';
+import { DEFAULT_AGENT_CONFIG } from '@/const/settings';
 
 import { AgentSettingsInstance, useAgentSettings } from './hooks/useAgentSettings';
 import { State, useStoreApi } from './store';
@@ -21,7 +22,7 @@ const StoreUpdater = memo<StoreUpdaterProps>(
     const useStoreUpdater = createStoreUpdater(storeApi);
 
     useStoreUpdater('meta', meta || DEFAULT_AGENT_META);
-    useStoreUpdater('config', config);
+    useStoreUpdater('config', config || DEFAULT_AGENT_CONFIG);
     useStoreUpdater('onConfigChange', onConfigChange);
     useStoreUpdater('onMetaChange', onMetaChange);
     useStoreUpdater('loading', loading);
