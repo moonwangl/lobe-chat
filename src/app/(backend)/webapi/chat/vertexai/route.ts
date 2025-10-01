@@ -1,4 +1,5 @@
 import { checkAuth } from '@/app/(backend)/middleware/auth';
+import { JWTPayload } from '@/const/auth';
 import { AgentRuntime, ModelProvider } from '@/libs/model-runtime';
 import { LobeVertexAI } from '@/libs/model-runtime/vertexai';
 import { safeParseJSON } from '@/utils/safeParseJSON';
@@ -14,22 +15,29 @@ import { POST as UniverseRoute } from '../[provider]/route';
 //   setGlobalDispatcher(new ProxyAgent({ uri: process.env.HTTP_PROXY_URL }));
 // }
 
-export const POST = checkAuth(async (req: Request, { jwtPayload }) =>
-  UniverseRoute(req, {
-    createRuntime: () => {
-      const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
+// Create the runtime function for VertexAI
+const vertexAICreateRuntime = (jwtPayload: JWTPayload) => {
+  const googleAuthStr = jwtPayload.apiKey ?? process.env.VERTEXAI_CREDENTIALS ?? undefined;
 
-      const credentials = safeParseJSON(googleAuthStr);
-      const googleAuthOptions = credentials ? { credentials } : undefined;
+  const credentials = safeParseJSON(googleAuthStr);
+  const googleAuthOptions = credentials ? { credentials } : undefined;
 
-      const instance = LobeVertexAI.initFromVertexAI({
-        googleAuthOptions,
-        location: process.env.VERTEXAI_LOCATION,
-        project: !!credentials?.project_id ? credentials?.project_id : process.env.VERTEXAI_PROJECT,
-      });
+  const instance = LobeVertexAI.initFromVertexAI({
+    googleAuthOptions,
+    location: process.env.VERTEXAI_LOCATION,
+    project: !!credentials?.project_id ? credentials?.project_id : process.env.VERTEXAI_PROJECT,
+  });
 
-      return new AgentRuntime(instance);
-    },
-    params: Promise.resolve({ provider: ModelProvider.VertexAI }),
-  }),
+  return new AgentRuntime(instance);
+};
+
+export const POST = checkAuth(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, _options) => {
+    // Call the universal route with the correct parameters
+    return UniverseRoute(req, {
+      createRuntime: vertexAICreateRuntime,
+      params: Promise.resolve({ provider: ModelProvider.VertexAI }),
+    });
+  },
 );
