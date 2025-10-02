@@ -1,10 +1,11 @@
-import { checkAuth } from '@/app/(backend)/middleware/auth';
 import { JWTPayload } from '@/const/auth';
 import { AgentRuntime, ModelProvider } from '@/libs/model-runtime';
 import { LobeVertexAI } from '@/libs/model-runtime/vertexai';
 import { safeParseJSON } from '@/utils/safeParseJSON';
 
 import { POST as UniverseRoute } from '../[provider]/route';
+
+export const runtime = 'edge';
 
 // due to the Chinese region does not support accessing Google
 // we need to use proxy to access it
@@ -31,13 +32,8 @@ const vertexAICreateRuntime = (jwtPayload: JWTPayload) => {
   return new AgentRuntime(instance);
 };
 
-export const POST = checkAuth(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async (req: Request, _options) => {
-    // Call the universal route with the correct parameters
-    return UniverseRoute(req, {
-      createRuntime: vertexAICreateRuntime,
-      params: Promise.resolve({ provider: ModelProvider.VertexAI }),
-    });
-  },
-);
+export const POST = async (req: Request) =>
+  UniverseRoute(req, {
+    createRuntime: vertexAICreateRuntime,
+    params: Promise.resolve({ provider: ModelProvider.VertexAI }),
+  });
