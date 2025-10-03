@@ -39,6 +39,12 @@ export interface JWTPayload {
   cloudflareBaseURLOrAccountID?: string;
 
   /**
+   * VertexAI specific parameters
+   */
+  projectId?: string;
+  region?: string;
+
+  /**
    * user id
    * in client db mode it's a uuid
    * in server db mode it's a user id

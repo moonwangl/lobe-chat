@@ -1,4 +1,4 @@
-import type { VertexAI } from '@google-cloud/vertexai';
+// VertexAI type removed to avoid Node.js dependency issues in build
 import {
   Content,
   FunctionCallPart,
@@ -25,11 +25,7 @@ import {
 import { AgentRuntimeError } from '../utils/createError';
 import { debugStream } from '../utils/debugStream';
 import { StreamingResponse } from '../utils/response';
-import {
-  GoogleGenerativeAIStream,
-  VertexAIStream,
-  convertIterableToStream,
-} from '../utils/streams';
+import { GoogleGenerativeAIStream, convertIterableToStream } from '../utils/streams';
 import { parseDataUri } from '../utils/uriParser';
 
 const modelsOffSafetySettings = new Set(['gemini-2.0-flash-exp']);
@@ -81,7 +77,7 @@ const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com';
 interface LobeGoogleAIParams {
   apiKey?: string;
   baseURL?: string;
-  client?: GoogleGenerativeAI | VertexAI;
+  client?: GoogleGenerativeAI | any; // VertexAI type replaced with any to avoid build issues
   id?: string;
   isVertexAi?: boolean;
 }
@@ -133,7 +129,9 @@ export class LobeGoogleAI implements LobeRuntimeAI {
                 return Math.min(budget, 24_576);
               })()
             : thinking?.type === 'disabled'
-              ? model.includes('-2.5-pro') ? 128 : 0
+              ? model.includes('-2.5-pro')
+                ? 128
+                : 0
               : undefined,
       };
 
@@ -197,8 +195,14 @@ export class LobeGoogleAI implements LobeRuntimeAI {
       }
 
       // Convert the response into a friendly text-stream
-      const Stream = this.isVertexAi ? VertexAIStream : GoogleGenerativeAIStream;
-      const stream = Stream(prod, { callbacks: options?.callback, inputStartAt });
+      let stream;
+      if (this.isVertexAi) {
+        // Dynamic import to avoid build issues with Node.js dependencies
+        const { VertexAIStream } = await import('../utils/streams/vertex-ai');
+        stream = VertexAIStream(prod, { callbacks: options?.callback, inputStartAt });
+      } else {
+        stream = GoogleGenerativeAIStream(prod, { callbacks: options?.callback, inputStartAt });
+      }
 
       // Respond with the stream
       return StreamingResponse(stream, { headers: options?.headers });
@@ -218,18 +222,18 @@ export class LobeGoogleAI implements LobeRuntimeAI {
       const response = await fetch(url, {
         method: 'GET',
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const json = await response.json();
-      
+
       const modelList: GoogleModelCard[] = json.models;
-  
+
       const processedModels = modelList.map((model) => {
         const id = model.name.replace(/^models\//, '');
-        
+
         return {
           contextWindowTokens: (model.inputTokenLimit || 0) + (model.outputTokenLimit || 0),
           displayName: model.displayName || id,
@@ -237,9 +241,9 @@ export class LobeGoogleAI implements LobeRuntimeAI {
           maxOutput: model.outputTokenLimit || undefined,
         };
       });
-  
+
       const { MODEL_LIST_CONFIGS, processModelList } = await import('../utils/modelParse');
-      
+
       return processModelList(processedModels, MODEL_LIST_CONFIGS.google);
     } catch (error) {
       console.error('Failed to fetch Google models:', error);

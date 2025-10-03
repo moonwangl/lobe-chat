@@ -7,4 +7,4 @@ export * from './openai';
 export * from './protocol';
 export * from './qwen';
 export * from './spark';
-export * from './vertex-ai';
+// vertex-ai is dynamically imported to avoid Node.js dependency issues

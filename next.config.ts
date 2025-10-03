@@ -247,13 +247,35 @@ const nextConfig: NextConfig = {
     // https://github.com/pinojs/pino/issues/688#issuecomment-637763276
     config.externals.push('pino-pretty');
 
+    // Exclude VertexAI and its dependencies from client-side bundle
+    if (!config.isServer) {
+      config.externals.push('@google-cloud/vertexai', 'google-auth-library', 'gaxios', 'gcp-metadata', 'google-logging-utils');
+    }
+
     config.resolve.alias.canvas = false;
 
     // to ignore epub2 compile error
     // refs: https://github.com/lobehub/lobe-chat/discussions/6769
+    // and to ignore @google-cloud/vertexai for client-side builds
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      zipfile: false,
+      '@google-cloud/vertexai': false,
+      // Exclude Node.js core modules that are used by Google Cloud packages
+      'child_process': false,
+      'crypto': false,
+      'fs': false,
+      'http': false,
+      'https': false,
+      'net': false,
+      'os': false,
+      'path': false,
+      'querystring': false,
+      'stream': false,
+      'tls': false,
+      'url': false,
+      'util': false,
+      'zipfile': false,
+      'zlib': false,
     };
     return config;
   },

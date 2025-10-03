@@ -43,6 +43,7 @@ import { LobeTaichuAI } from './taichu';
 import { LobeTencentCloudAI } from './tencentcloud';
 import { LobeTogetherAI } from './togetherai';
 import { LobeUpstageAI } from './upstage';
+// import { LobeVertexAI } from './vertexai'; // Commented out to avoid static import
 import { LobeVLLMAI } from './vllm';
 import { LobeVolcengineAI } from './volcengine';
 import { LobeWenxinAI } from './wenxin';

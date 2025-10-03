@@ -103,6 +103,17 @@ const getParamsFromPayload = (provider: string, payload: JWTPayload) => {
 
       return { apiKey };
     }
+
+    case ModelProvider.VertexAI: {
+      const { GOOGLE_VERTEX_AI_PROJECT_ID, GOOGLE_VERTEX_AI_REGION } = llmConfig;
+
+      const apiKey = apiKeyManager.pick(payload?.apiKey);
+      const projectId = payload?.projectId || GOOGLE_VERTEX_AI_PROJECT_ID;
+      const region = payload?.region || GOOGLE_VERTEX_AI_REGION || 'us-central1';
+      const baseURL = payload?.baseURL;
+
+      return { apiKey, baseURL, projectId, region };
+    }
   }
 };
 

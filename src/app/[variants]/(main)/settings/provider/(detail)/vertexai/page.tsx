@@ -2,10 +2,11 @@
 
 import { Markdown } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { FormPassword } from '@/components/FormInput';
-import { VertexAIProviderCard } from '@/config/modelProviders';
+import VertexAIProviderCard from '@/config/modelProviders/vertexai';
 import { aiProviderSelectors, useAiInfraStore } from '@/store/aiInfra';
 import { GlobalLLMProviderKey } from '@/types/user/settings';
 
@@ -55,6 +56,7 @@ const useProviderCard = (): ProviderItem => {
         name: [KeyVaultsConfigKey, LLMProviderApiTokenKey],
       },
     ],
+    description: VertexAIProviderCard.description,
   };
 };
 

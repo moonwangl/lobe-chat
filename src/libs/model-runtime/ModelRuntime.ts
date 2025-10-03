@@ -106,7 +106,19 @@ class ModelRuntime {
         LobeCloudflareParams & { apiKey?: string; apiVersion?: string; baseURL?: string }
     >,
   ) {
-    // @ts-expect-error runtime map not include vertex so it will be undefined
+    // Handle VertexAI with dynamic import to avoid Node.js dependencies in client bundle
+    if (provider === 'vertexai') {
+      // Only import VertexAI on server side
+      if (typeof window === 'undefined') {
+        const { LobeVertexAI } = await import('./vertexai');
+        const vertexAIInstance = await LobeVertexAI.initFromVertexAI(params);
+        return new ModelRuntime(vertexAIInstance);
+      } else {
+        throw new Error('VertexAI is only available on the server side');
+      }
+    }
+
+    // @ts-expect-error runtime map may not include all providers
     const providerAI = providerRuntimeMap[provider] ?? LobeOpenAI;
     const runtimeModel: LobeRuntimeAI = new providerAI(params);
 
