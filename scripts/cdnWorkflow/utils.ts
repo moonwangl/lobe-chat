@@ -81,7 +81,10 @@ export const fetchImageAsFile = async (url: string, width: number) => {
     const filename = Date.now().toString() + type;
 
     // Step 3: Create a file from the blob
-    const file: File = new File([buffer], filename, {
+    // Convert to Uint8Array which is compatible with BlobPart
+    const fileBuffer = buffer instanceof Buffer ? new Uint8Array(buffer) : new Uint8Array(buffer);
+
+    const file: File = new File([fileBuffer], filename, {
       lastModified: Date.now(),
       type: type === '.webp' ? 'image/webp' : blob.type,
     });
