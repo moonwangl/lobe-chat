@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import { BRANDING_LOGO_URL, BRANDING_NAME, ORG_NAME } from '@/const/branding';
 import { DEFAULT_LANG } from '@/const/locale';
 import { OFFICIAL_URL, OG_URL } from '@/const/url';
@@ -12,7 +14,12 @@ const BASE_PATH = appEnv.NEXT_PUBLIC_BASE_PATH;
 // if there is a base path, then we don't need the manifest
 const noManifest = !!BASE_PATH;
 
-export const generateMetadata = async (props: DynamicLayoutProps) => {
+interface RootLayoutProps extends DynamicLayoutProps {
+  children: ReactNode;
+  modal: ReactNode;
+}
+
+export const generateMetadata = async (props: RootLayoutProps) => {
   const locale = await RouteVariants.getLocale(props);
   const { t } = await translation('metadata', locale);
 

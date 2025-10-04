@@ -110,7 +110,8 @@ class ModelRuntime {
     if (provider === 'vertexai') {
       // Only import VertexAI on server side
       if (typeof window === 'undefined') {
-        const { LobeVertexAI } = await import('./vertexai');
+        // @ts-ignore
+        const { LobeVertexAI } = await import(/* webpackIgnore: true */ './vertexai');
         const vertexAIInstance = await LobeVertexAI.initFromVertexAI(params);
         return new ModelRuntime(vertexAIInstance);
       } else {

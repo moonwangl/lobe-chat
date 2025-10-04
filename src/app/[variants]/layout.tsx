@@ -59,7 +59,7 @@ export default RootLayout;
 
 export { generateMetadata } from './metadata';
 
-export const generateViewport = async (props: DynamicLayoutProps): ResolvingViewport => {
+export const generateViewport = async (props: RootLayoutProps): ResolvingViewport => {
   const isMobile = await RouteVariants.getIsMobile(props);
 
   const dynamicScale = isMobile ? { maximumScale: 1, userScalable: false } : {};

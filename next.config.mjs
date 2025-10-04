@@ -1,7 +1,6 @@
 import analyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import withSerwistInit from '@serwist/next';
-import type { NextConfig } from 'next';
 import ReactComponentName from 'react-scan/react-component-name/webpack';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -15,12 +14,12 @@ const isUsePglite = process.env.NEXT_PUBLIC_CLIENT_DB === 'pglite';
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
 const isStandaloneMode = buildWithDocker || isDesktop;
 
-const standaloneConfig: NextConfig = {
+const standaloneConfig = {
   output: 'standalone',
   outputFileTracingIncludes: { '*': ['public/**/*', '.next/static/**/*'] },
 };
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   ...(isStandaloneMode ? standaloneConfig : {}),
   basePath,
   compress: isProd,
@@ -218,8 +217,6 @@ const nextConfig: NextConfig = {
       source: '/repos',
     },
   ],
-  // when external packages in dev mode with turbopack, this config will lead to bundle error
-  serverExternalPackages: isProd ? ['@electric-sql/pglite'] : undefined,
 
   transpilePackages: ['pdfjs-dist', 'mermaid'],
 
@@ -247,10 +244,8 @@ const nextConfig: NextConfig = {
     // https://github.com/pinojs/pino/issues/688#issuecomment-637763276
     config.externals.push('pino-pretty');
 
-    // Exclude VertexAI and its dependencies from client-side bundle
-    if (!config.isServer) {
-      config.externals.push('@google-cloud/vertexai', 'google-auth-library', 'gaxios', 'gcp-metadata', 'google-logging-utils');
-    }
+    // VertexAI dependencies are causing build issues with externals
+    // Using dynamic imports and server-side checks instead
 
     config.resolve.alias.canvas = false;
 
@@ -269,6 +264,7 @@ const nextConfig: NextConfig = {
       'net': false,
       'os': false,
       'path': false,
+      'process': false,
       'querystring': false,
       'stream': false,
       'tls': false,
@@ -281,7 +277,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-const noWrapper = (config: NextConfig) => config;
+const noWrapper = (config) => config;
 
 const withBundleAnalyzer = process.env.ANALYZE === 'true' ? analyzer() : noWrapper;
 
@@ -297,7 +293,7 @@ const withPWA =
 const hasSentry = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
 const withSentry =
   isProd && hasSentry
-    ? (c: NextConfig) =>
+    ? (c) =>
         withSentryConfig(
           c,
           {
@@ -338,4 +334,4 @@ const withSentry =
         )
     : noWrapper;
 
-export default withBundleAnalyzer(withPWA(withSentry(nextConfig) as NextConfig));
+export default withBundleAnalyzer(withPWA(withSentry(nextConfig)));

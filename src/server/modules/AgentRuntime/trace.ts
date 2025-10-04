@@ -1,5 +1,3 @@
-import { after } from 'next/server';
-
 import { INBOX_SESSION_ID } from '@/const/session';
 import {
   LOBE_CHAT_OBSERVATION_ID,
@@ -9,6 +7,15 @@ import {
 } from '@/const/trace';
 import { ChatStreamCallbacks, ChatStreamPayload } from '@/libs/model-runtime';
 import { TraceClient } from '@/libs/traces';
+
+// Conditional import for 'after' function (available in Next.js 15+)
+let after: ((callback: () => Promise<void>) => void) | undefined;
+try {
+  // @ts-ignore
+  after = require('next/server').after;
+} catch {
+  // 'after' is not available in Next.js 14, will fallback to immediate execution
+}
 
 export interface AgentChatOptions {
   enableTrace?: boolean;
@@ -80,13 +87,26 @@ export const createTraceOptions = (
       },
 
       onFinal: () => {
-        after(async () => {
-          try {
-            await traceClient.shutdownAsync();
-          } catch (e) {
-            console.error('TraceClient shutdown error:', e);
-          }
-        });
+        // Use 'after' if available (Next.js 15+), otherwise execute immediately
+        if (after) {
+          after(async () => {
+            try {
+              await traceClient.shutdownAsync();
+            } catch (e) {
+              console.error('TraceClient shutdown error:', e);
+            }
+          });
+        } else {
+          // Fallback for Next.js 14: execute cleanup immediately
+          // Note: This may not be ideal for performance but ensures compatibility
+          (async () => {
+            try {
+              await traceClient.shutdownAsync();
+            } catch (e) {
+              console.error('TraceClient shutdown error:', e);
+            }
+          })();
+        }
       },
 
       onStart: () => {
