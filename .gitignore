@@ -56,6 +56,7 @@ next-env.d.ts
 .next
 .env
 .env.production
+.env.production.aliyun
 public/*.js
 public/sitemap.xml
 public/sitemap-index.xml

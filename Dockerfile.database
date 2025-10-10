@@ -160,7 +160,7 @@ RUN \
     && chown -R nextjs:nodejs /app /etc/proxychains4.conf
 
 ## Production image, copy all the files and run next
-FROM scratch
+FROM node:${NODEJS_VERSION}-alpine
 
 # Copy all the files from app, set the correct permission for prerender cache
 COPY --from=app / /
