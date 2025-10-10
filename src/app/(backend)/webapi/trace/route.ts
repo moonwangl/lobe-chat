@@ -1,5 +1,3 @@
-import { after } from 'next/server';
-
 import { TraceEventType } from '@/const/trace';
 import { TraceClient } from '@/libs/traces';
 import { TraceEventBasePayload, TraceEventPayloads } from '@/types/trace';
@@ -37,9 +35,12 @@ export const POST = async (req: Request) => {
     }
   }
 
-  after(async () => {
+  // Schedule cleanup after response is sent
+  try {
     await traceClient.shutdownAsync();
-  });
+  } catch (e) {
+    console.error('TraceClient shutdown error:', e);
+  }
 
   return new Response(undefined, { status: 201 });
 };

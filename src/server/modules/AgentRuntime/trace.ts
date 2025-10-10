@@ -1,5 +1,3 @@
-import { after } from 'next/server';
-
 import { INBOX_SESSION_ID } from '@/const/session';
 import {
   LOBE_CHAT_OBSERVATION_ID,
@@ -79,14 +77,13 @@ export const createTraceOptions = (
         trace?.update({ output });
       },
 
-      onFinal: () => {
-        after(async () => {
-          try {
-            await traceClient.shutdownAsync();
-          } catch (e) {
-            console.error('TraceClient shutdown error:', e);
-          }
-        });
+      onFinal: async () => {
+        // Perform cleanup directly
+        try {
+          await traceClient.shutdownAsync();
+        } catch (e) {
+          console.error('TraceClient shutdown error:', e);
+        }
       },
 
       onStart: () => {

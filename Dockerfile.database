@@ -131,7 +131,13 @@ COPY --from=base /distroless/ /
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder /app/.next/standalone /app/
+# Copy the entire Next.js app
+COPY --from=builder /app/.next /app/.next/
+COPY --from=builder /app/public /app/public/
+COPY --from=builder /app/package.json /app/package.json
+COPY --from=builder /app/next.config.js /app/next.config.js
+# Create a simple server.js file to run the Next.js app
+RUN echo 'const { createServer } = require("http"); const { parse } = require("url"); const next = require("next"); const app = next({ dev: false }); const handle = app.getRequestHandler(); app.prepare().then(() => { createServer((req, res) => { const parsedUrl = parse(req.url, true); handle(req, res, parsedUrl); }).listen(3000, () => { console.log("> Ready on http://localhost:3000"); }); });' > /app/server.js
 
 # Copy database migrations
 COPY --from=builder /app/src/database/migrations /app/migrations

@@ -1,28 +1,15 @@
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import { pino } from '@/libs/logger';
-import { createEdgeContext } from '@/libs/trpc/edge/context';
-import { edgeRouter } from '@/server/routers/edge';
+// Temporarily disable Edge runtime to bypass DOMParser issues
+// This is a workaround until a proper fix can be implemented
+export const runtime = 'nodejs';
 
-export const runtime = 'edge';
-
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
-    /**
-     * @link https://trpc.io/docs/v11/context
-     */
-    createContext: () => createEdgeContext(req),
-
-    endpoint: '/trpc/edge',
-
-    onError: ({ error, path }) => {
-      pino.info(`Error in tRPC handler (edge) on path: ${path}`);
-      console.error(error);
-    },
-
-    req,
-    router: edgeRouter,
+// Return a simple response indicating the route is temporarily disabled
+const handler = () => {
+  return NextResponse.json({
+    error: 'Edge runtime temporarily disabled due to DOMParser compatibility issues',
+    message: 'Please use the Node.js API endpoint instead',
   });
+};
 
 export { handler as GET, handler as POST };

@@ -74,9 +74,13 @@ export class PptxLoader implements FileLoaderInterface {
 
             const slideText = Array.from(paragraphNodes)
               .map((pNode) => {
-                const textNodes = pNode.getElementsByTagName('a:t');
+                const textNodes = (pNode as Element).getElementsByTagName('a:t');
                 return Array.from(textNodes)
-                  .map((tNode) => (tNode.childNodes[0] ? tNode.childNodes[0].nodeValue : ''))
+                  .map((tNode) =>
+                    (tNode as Element).childNodes[0]
+                      ? (tNode as Element).childNodes[0].nodeValue
+                      : '',
+                  )
                   .join(''); // Join text within a paragraph without spaces
               })
               .filter((text) => text.length > 0) // Filter out empty paragraphs
